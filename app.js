@@ -85,7 +85,7 @@ passport.deserializeUser((id, done) => {
 
 app.get("/", async function (request, response) {
   // response.json("hi hello test")
-  response.json(await Question.getAllQuestions());
+  response.render("index",{title:"My voying app"})
   // response.render("index");
 });
 app.use(express.static(path.join(__dirname, "public")));
