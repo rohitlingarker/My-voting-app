@@ -18,7 +18,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    console.log("hi");
-    // await queryInterface.removeColumn("Questions", "electionId");
+    // console.log("hi");
+    await queryInterface.removeColumn("Questions", "electionId");
   },
 };
