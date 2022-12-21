@@ -2,19 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Questions", {
+    await queryInterface.createTable("Voters", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
-        type: Sequelize.TEXT,
+      voterName: {
+        type: Sequelize.STRING,
         allowNull: false,
+        unique: {
+          args: true,
+          msg: "Credentials already existing , Try Sign-in",
+        },
+        validate: {
+          notNull: true,
+          len: {
+            args: 1,
+            msg: "Email Required",
+          },
+        },
       },
-      description: {
-        type: Sequelize.TEXT,
+      password: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -27,6 +38,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Questions");
+    await queryInterface.dropTable("Voters");
   },
 };

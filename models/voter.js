@@ -1,36 +1,31 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Voter extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    /* eslint-disable no-unused-vars */
     static associate(models) {
       // define association here
-    }
-    static async allusers() {
-      return this.findAll({});
+      Voter.belongsTo(models.Election, {
+        foreignKey: "electionId",
+      });
     }
 
-    static async deleteUser() {
-      return this.destroy({ truncate: { cascade: true } });
+    static async getAllVoters() {
+      return await Voter.findAll();
     }
   }
-  User.init(
+  Voter.init(
     {
-      firstName: {
-        type: DataTypes.STRING,
-      },
-      lastName: DataTypes.STRING,
-      email: {
+      voterName: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
           args: true,
-          msg: "Credentials already existing , Try Sign-in",
+          msg: "Credentials already existing , Try Different Credentials",
         },
         validate: {
           notNull: true,
@@ -40,14 +35,12 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      password: {
-        type: DataTypes.STRING,
-      },
+      password: DataTypes.STRING,
     },
     {
       sequelize,
-      modelName: "User",
+      modelName: "Voter",
     }
   );
-  return User;
+  return Voter;
 };

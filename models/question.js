@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Question extends Model {
     /**
@@ -11,14 +9,51 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Question.belongsTo(models.Election, {
+        foreignKey: "electionId",
+      });
+
+      Question.hasMany(models.Option, {
+        foreignKey: "questionId",
+      });
+    }
+    static async getAllQuestions(id) {
+      return await Question.findAll({
+        where: {
+          electionId: id,
+        },
+      });
+    }
+
+    static async addQuestion(data) {
+      try {
+        return await this.create({
+          name: data.name,
+          description: data.description,
+          electionId: data.electionId,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    static async removeQuestion({ id }) {
+      return await this.destroy({
+        where: {
+          id,
+        },
+      });
     }
   }
-  Question.init({
-    name: DataTypes.TEXT,
-    description: DataTypes.TEXT
-  }, {
-    sequelize,
-    modelName: 'Question',
-  });
+  Question.init(
+    {
+      name: DataTypes.TEXT,
+      description: DataTypes.TEXT,
+    },
+    {
+      sequelize,
+      modelName: "Question",
+    }
+  );
   return Question;
 };

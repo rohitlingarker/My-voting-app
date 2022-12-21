@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=title%></title>
+    <script>
+        function toggleStatus(id){
+            fetch(`/elections/${id}`, {
+                method: "put",
+                headers: { "Content-Type": "application/json" },
+                
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+        function deleteElection(id){
+            fetch(`/elections/${id}`, {
+                method: "delete",
+                headers: { "Content-Type": "application/json" },
+                
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.location.replace("/elections");
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    </script>
+</head>
+<body>
+    <%- include('header.ejs') %>
+    <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
+    <h4>There are <%=quesCount%> questions in the ballet of this election</h4>
+    <a href="/elections/<%=id%>/questions">Manage your questions</a>
+    <h4>There are currently <%=voterCount%> voters assigned for this election</h4>
+    <a href="/elections/<%=id%>/voters">Manage voters</a>
+    <div>
+        <button onclick="toggleStatus(<%=id%>)"><%= onGoingStatus?"End":"Start"%></button>
+        <button onclick="deleteElection(<%=id%>)">Delete</button>
+    </div>
+</body>
+</html>
