@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
     static async getAllVoters() {
       return await Voter.findAll();
     }
+
+    static async remove(id){
+      return this.destroy({
+        where:{
+         id 
+        }
+      })
+    }
   }
   Voter.init(
     {
@@ -36,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       password: DataTypes.STRING,
+      voteStatus:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false
+      }
     },
     {
       sequelize,

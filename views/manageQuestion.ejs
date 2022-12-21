@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="public/css/index.css">
+    <title><%=title%></title>
+  </head>
+  <body>
+    <%- include('header.ejs') %>
+    <b><%=question.name%></b>
+    <p><%=question.description%></p>
+    <% if(noOfOptions < 2 ){%>
+    <small>please provide atleast two options for a question</small>
+    <%}%>
+    <ul>
+      <% for (let i=0; i < options.length;i++){%>
+      <li>
+        <div>
+          <%= options[i].name %>
+          <a href="#">edit</a>
+          <a href="#">del</a>
+        </div>
+      </li>
+      <% } %>
+      
+    </ul>
+
+    <form action="/questions/<%=question.id%>/options/new" method="post">
+      <input type="text" placeholder="Add new option" name="name" />
+      <button type="submit">Add</button>
+    </form>
+
+  </body>
+</html>

@@ -11,9 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Election.hasMany(models.Question, {
         foreignKey: "electionId",
+        onDelete: 'CASCADE',
       });
       Election.hasMany(models.Voter, {
         foreignKey: "electionId",
+        onDelete: 'CASCADE',
       });
     }
     static async getAllElections() {
@@ -60,6 +62,7 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           id,
         },
+        
       });
     }
   }

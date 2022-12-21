@@ -11,10 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Question.belongsTo(models.Election, {
         foreignKey: "electionId",
+        onDelete: 'CASCADE',
       });
 
       Question.hasMany(models.Option, {
         foreignKey: "questionId",
+        onDelete: 'CASCADE',
       });
     }
     static async getAllQuestions(id) {
@@ -42,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           id,
         },
+        cascade:true
       });
     }
   }
@@ -49,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.TEXT,
       description: DataTypes.TEXT,
+      electionId:DataTypes.INTEGER
     },
     {
       sequelize,

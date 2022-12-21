@@ -7,27 +7,22 @@
     <title><%=title%></title>
     <link rel="stylesheet" href="elections.css" />
   </head>
-
   <body>
     <%- include('header.ejs') %>
     <h3>Welcome</h3>
+    <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
+
     <ul>
-      <% for (let i=0; i < data.length;i++){%>
+      <% for (let i=0; i < questions.length;i++){%>
       <li>
         <div>
-          <a
-            href="/elections/<%= data[i].id %>"
-            onclick="redirectToElectionPage(<%= data[i].id%>)"
-          >
-            <%= data[i].name %>
-          </a>
+          <%= questions[i].name %>
+          <small> <%= questions[i].description %> </small>
         </div>
       </li>
       <% } %>
     </ul>
-    <form action="/elections" method="post">
-      <input type="text" placeholder="Add new election" name="name" />
-      <button type="submit">create</button>
-    </form>
+
+    <a href="/elections/<%=id%>/questions/new">Create New Question</a>
   </body>
 </html>

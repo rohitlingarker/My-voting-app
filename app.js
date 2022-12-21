@@ -85,7 +85,7 @@ passport.deserializeUser((id, done) => {
 
 app.get("/", async function (request, response) {
   // response.json("hi hello test")
-  response.render("index",{title:"My voying app"})
+  response.render("index", { title: "My voying app" });
   // response.render("index");
 });
 app.use(express.static(path.join(__dirname, "public")));
@@ -166,7 +166,7 @@ app.delete("/elections/:id", async (request, response) => {
 app.get("/elections/:id/questions", async (request, response) => {
   const questions = await Question.getAllQuestions(request.params.id);
   const electionName = await Election.findByPk(request.params.id).name;
-  response.render("manageQuestions", {
+  response.render("questions", {
     title: "Ballot",
     electionName,
     questions,
@@ -174,9 +174,9 @@ app.get("/elections/:id/questions", async (request, response) => {
   });
 });
 
-app.delete("/elections/:id/questions/:qid", async (request, response) => {
+app.delete("questions/:id", async (request, response) => {
   try {
-    const value = await Question.removeQuestion(request.params.qid);
+    const value = await Question.removeQuestion(request.params.id);
     response.json(value > 0 ? true : false);
   } catch (error) {
     console.log(error);
@@ -202,7 +202,7 @@ app.post("/elections/:id/questions/new", async (request, response) => {
     });
     console.log(newQuestion);
     if (request.accepts("html")) {
-      response.redirect(`/elections/${request.params.id}/questions`);
+      response.redirect(`/questions/${newQuestion.id}`);
     } else {
       response.json(newQuestion);
     }
@@ -210,5 +210,44 @@ app.post("/elections/:id/questions/new", async (request, response) => {
     console.log(error);
   }
 });
+
+app.get("/questions/:id",async (request,response)=>{
+  try {
+    const question = await Question.findByPk(request.params.id)
+    const options = await question.getOptions()
+    const noOfOptions = await question.countOptions()
+    console.log();
+    response.render("manageQuestion",{title:"Manage Question",question:question,options:options,noOfOptions:noOfOptions})
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+app.post("/questions/:id/options/new",async (request,response)=>{
+  try{const question = await Question.findByPk(request.params.id)
+  const newOption = await Option.create({
+    name: request.body.name,
+    count: 0,
+    questionId:request.params.id
+  })
+  await question.addOption(newOption)
+  response.redirect(`/questions/${request.params.id}`)
+  }catch(error){
+    console.log(error);
+  }
+})
+
+app.delete("/options/:id",async (request,response)=>{
+
+    try{
+      const value = await Option.remove(request.params.id);
+      response.json(value > 0 ? true : false)
+    }catch(error){
+      console.log(error);
+    }
+})
+
+
+
 
 module.exports = app;
