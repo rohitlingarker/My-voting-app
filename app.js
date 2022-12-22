@@ -163,6 +163,11 @@ app.delete("/elections/:id", async (request, response) => {
   }
 });
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 app.get("/elections/:id/questions", async (request, response) => {
   const questions = await Question.getAllQuestions(request.params.id);
   const electionName = await Election.findByPk(request.params.id).name;
@@ -174,6 +179,8 @@ app.get("/elections/:id/questions", async (request, response) => {
   });
 });
 
+//app.put(edit name)
+
 app.delete("questions/:id", async (request, response) => {
   try {
     const value = await Question.removeQuestion(request.params.id);
@@ -182,6 +189,9 @@ app.delete("questions/:id", async (request, response) => {
     console.log(error);
   }
 });
+
+
+
 app.get("/elections/:id/questions/new", async (request, response) => {
   try {
     response.render("newQuestion", {

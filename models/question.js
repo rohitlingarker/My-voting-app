@@ -11,12 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Question.belongsTo(models.Election, {
         foreignKey: "electionId",
-        onDelete: 'CASCADE',
       });
 
       Question.hasMany(models.Option, {
-        foreignKey: "questionId",
         onDelete: 'CASCADE',
+        foreignKey: "questionId",
       });
     }
     static async getAllQuestions(id) {

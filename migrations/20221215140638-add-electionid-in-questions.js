@@ -7,14 +7,16 @@ module.exports = {
       type: Sequelize.DataTypes.INTEGER,
     });
 
-    await queryInterface.addConstraint("Questions", {
-      fields: ["electionId"],
-      type: "foreign key",
-      references: {
-        table: "Elections",
-        field: "id",
-      },
-    });
+    await queryInterface.sequelize.query('ALTER TABLE "Questions" ADD CONSTRAINT "Questions_electionId_Elections_fk" FOREIGN KEY ("electionId") REFERENCES "Elections" (id) MATCH SIMPLE ON DELETE CASCADE')
+
+    // await queryInterface.addConstraint("Questions", {
+    //   fields: ["electionId"],
+    //   type: "foreign key",
+    //   references: {
+    //     table: "Elections",
+    //     field: "id",
+    //   },
+    // });
   },
 
   async down(queryInterface, Sequelize) {
