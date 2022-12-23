@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Election.hasMany(models.Question, {
-        onDelete: 'CASCADE',
+        onDelete: "CASCADE",
         foreignKey: "electionId",
       });
       Election.hasMany(models.Voter, {
-        onDelete: 'CASCADE',
+        onDelete: "CASCADE",
         foreignKey: "electionId",
       });
     }
@@ -56,13 +56,16 @@ module.exports = (sequelize, DataTypes) => {
         console.log(error);
       }
     }
+    static async checkStatus(id) {
+      const election = await Election.findByPk(id);
+      return election.onGoingStatus;
+    }
 
     static async removeElection(id) {
       return await this.destroy({
         where: {
           id,
         },
-        
       });
     }
   }

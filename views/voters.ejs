@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=title%></title>
+    <link rel="stylesheet" href="./css/index.css">
+    
+  </head>
+  <body>
+    <div>
+        <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a>>
+      </div>
+    <%- include('header.ejs') %>
+    <h3>Welcome</h3>
+    <h3><a href="/elections/<%=id%>"><%=election.name%></a></h3>
+
+    <ul>
+      <% for (let i=0; i < voters.length;i++){%>
+      <li>
+        <div>
+          <input type="text" value="<%= voters[i].voterName %>">
+          <input type="password" id="<%= voters[i].id %>" value="<%= voters[i].password %>"
+          
+          onfocus="(()=>{document.getElementById('<%= voters[i].id %>').type='text';})()" 
+          onblur="(()=>{document.getElementById('<%= voters[i].id %>').type='password';})()"
+          >
+        </div>
+      </li>
+      <% } %>
+    </ul>
+
+    <a href="/elections/<%=id%>/voters/new">Create New Voter</a>
+
+    
+  </body>
+</html>

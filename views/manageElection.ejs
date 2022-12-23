@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <link rel="stylesheet" href="./css/index.css">
     <title><%=title%></title>
     <script>
+        var token = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content")
+
         function toggleStatus(id){
             fetch(`/elections/${id}`, {
                 method: "put",
                 headers: { "Content-Type": "application/json" },
-                
+                body: JSON.stringify({
+                    "_csrf": token
+                })
             })
                 .then((res) => {
                     if (res.ok) {
@@ -23,7 +31,9 @@
             fetch(`/elections/${id}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
-                
+                body: JSON.stringify({
+                    "_csrf": token
+                })
             })
                 .then((res) => {
                     if (res.ok) {
@@ -35,15 +45,28 @@
     </script>
 </head>
 <body>
+    <div>
+        <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=electionName%></a>
+      </div>
     <%- include('header.ejs') %>
     <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
     <h4>There are <%=quesCount%> questions in the ballet of this election</h4>
-    <a href="/elections/<%=id%>/questions">Manage your questions</a>
+    <% if (! onGoingStatus){%>
+        <a href="/elections/<%=id%>/questions">Manage your questions</a>
+    <%}else{%>
+        <p>election running at:</p>
+        <a id="vote" href="/elections/<%=id%>/vote">/elections/<%=id%>/vote</a>
+        <%}%>
     <h4>There are currently <%=voterCount%> voters assigned for this election</h4>
     <a href="/elections/<%=id%>/voters">Manage voters</a>
     <div>
         <button onclick="toggleStatus(<%=id%>)"><%= onGoingStatus?"End":"Start"%></button>
         <button onclick="deleteElection(<%=id%>)">Delete</button>
     </div>
+
+    <script>
+        const vote=document.getElementById("vote")
+        vote.innerText=window.location.origin+vote.innerText
+    </script>
 </body>
 </html>

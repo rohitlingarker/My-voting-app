@@ -15,8 +15,9 @@ module.exports = {
     //     field: "id",
     //   },
     // });
-    await queryInterface.sequelize.query('ALTER TABLE "Voters" ADD CONSTRAINT "Voters_electionId_Elections_fk" FOREIGN KEY ("electionId") REFERENCES "Elections" (id) MATCH SIMPLE ON DELETE CASCADE')
-    
+    await queryInterface.sequelize.query(
+      'ALTER TABLE "Voters" ADD CONSTRAINT "Voters_electionId_Elections_fk" FOREIGN KEY ("electionId") REFERENCES "Elections" (id) MATCH SIMPLE ON DELETE CASCADE'
+    );
   },
 
   async down(queryInterface, Sequelize) {

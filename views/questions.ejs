@@ -5,19 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%=title%></title>
-    <link rel="stylesheet" href="elections.css" />
+    <link rel="stylesheet" href="./css/index.css">
   </head>
   <body>
+    <div>
+      <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a> > <a href="/elections/<%=id%>/questions">questions</a>
+    </div>
     <%- include('header.ejs') %>
     <h3>Welcome</h3>
-    <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
+    <h3><a href="/elections/<%=id%>"><%=election.name%></a></h3>
 
     <ul>
       <% for (let i=0; i < questions.length;i++){%>
       <li>
         <div>
-          <%= questions[i].name %>
-          <small> <%= questions[i].description %> </small>
+          <a href="/questions/<%=questions[i].id%>">
+            <%= questions[i].name %>
+          </a>
+          
         </div>
       </li>
       <% } %>

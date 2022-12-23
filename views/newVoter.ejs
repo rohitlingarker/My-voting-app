@@ -9,18 +9,18 @@
 </head>
 <body>
     <%- include('header.ejs') %>
-    <form action="/elections/<%=id%>/questions/new" method="post">
+    <form action="/elections/<%=id%>/voters/new" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div>
-            <label for="questionName">Question Name:</label>
-            <input type="text" id="questionName" name="name">
+            <label for="voterName">Voter Name:</label>
+            <input type="text" id="voterName" name="voterName">
         </div>
         <div>
-            <label for="description">Description:</label>
-            <textarea name="description" id="description" cols="30" rows="10"></textarea>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
         </div>
         <button type="submit" >
-            Create
+            Add
         </button>
     </form>
 </body>

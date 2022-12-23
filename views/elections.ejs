@@ -5,10 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%=title%></title>
-    <link rel="stylesheet" href="elections.css" />
+    <link rel="stylesheet" href="./css/index.css">
   </head>
 
   <body>
+    <div>
+      <a href="/">home</a> > <a href="/elections">elections</a>
+    </div>
     <%- include('header.ejs') %>
     <h3>Welcome</h3>
     <ul>
@@ -26,6 +29,7 @@
       <% } %>
     </ul>
     <form action="/elections" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <input type="text" placeholder="Add new election" name="name" />
       <button type="submit">create</button>
     </form>

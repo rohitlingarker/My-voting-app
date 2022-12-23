@@ -14,16 +14,33 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    static async getAllVoters() {
-      return await Voter.findAll();
+    static async getAllVoters(id) {
+      return await Voter.findAll({
+        where: {
+          electionId: id,
+        },
+      });
     }
 
-    static async remove(id){
+    static async addVoter(data) {
+      try {
+        return await this.create({
+          voterName: data.voterName,
+          password: data.password,
+          voteStatus: false,
+          electionId: data.electionId,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    static async remove(id) {
       return this.destroy({
-        where:{
-         id 
-        }
-      })
+        where: {
+          id,
+        },
+      });
     }
   }
   Voter.init(
@@ -44,10 +61,10 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       password: DataTypes.STRING,
-      voteStatus:{
-        type:DataTypes.BOOLEAN,
-        allowNull:false
-      }
+      voteStatus: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
     },
     {
       sequelize,

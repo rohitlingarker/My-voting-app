@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       Question.hasMany(models.Option, {
-        onDelete: 'CASCADE',
+        onDelete: "CASCADE",
         foreignKey: "questionId",
       });
     }
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
         where: {
           id,
         },
-        cascade:true
+        cascade: true,
       });
     }
   }
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.TEXT,
       description: DataTypes.TEXT,
-      electionId:DataTypes.INTEGER
+      electionId: DataTypes.INTEGER,
     },
     {
       sequelize,

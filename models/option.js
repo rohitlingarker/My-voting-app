@@ -14,12 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    static async remove(id){
+    static async remove(id) {
       return this.destroy({
-        where:{
-         id 
-        }
-      })
+        where: {
+          id,
+        },
+      });
     }
   }
   Option.init(
