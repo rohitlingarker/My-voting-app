@@ -14,12 +14,17 @@
 <body>
     <%- include("header.ejs")%>
 
+    
+        <h2>Results</h2>
 
-        <h2>
+        <h3>
             <%=election.name%>
-        </h2>
-        <form action="/elections/<%=election.id%>/evalVote" method="post" onsubmit="return confirm('Cannot change your vote after this,proceed?');">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        </h3>
+        <% if(messages && messages.error && messages.error.length > 0)  { %>
+            <% for(var i=0; i<messages.error.length; i++) { %>
+                    <li><%= messages.error[i] %></li>
+            <% } %>
+          <% } %>
         <% let questionNo=1 %>
             <% for(let i=0;i<questionsList.length;i++){ if(optionsList[questionsList[i].id]){ %>
                     <section>
@@ -27,21 +32,18 @@
                         <b>
                             <%=questionsList[i].name%>
                         </b><br>
-                        <p><%=questionsList[i].description%></p>
-
+                        
+                        <ul>
                         <%for(j in optionsList[questionsList[i].id]){%>
-                            <div>
-                                <input type="radio" name="<%=questionsList[i].id%>" id="<%=optionsList[questionsList[i].id][j].id%>" value="" required>
-                                <label for="<%=optionsList[questionsList[i].id][j].id%>">
-                                    <%=optionsList[questionsList[i].id][j].name%>
-                                </label>
-                            </div>
+                            <li>
+                                <p><%=optionsList[questionsList[i].id][j].name%>: <b><%=optionsList[questionsList[i].id][j].count%></b></p>
+                            </li>
                             <%}%>
+                        </ul>
                     </section>
                     
                     <% questionNo++; }}%>
-                    <button type="submit">Vote</button>
-                </form>
+                    
 </body>
 
 </html>

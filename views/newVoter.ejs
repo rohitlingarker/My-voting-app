@@ -9,10 +9,11 @@
 </head>
 <body>
     <%- include('header.ejs') %>
+    
     <form action="/elections/<%=id%>/voters/new" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div>
-            <label for="voterName">Voter Name:</label>
+            <label for="voterName">Voter ID:</label>
             <input type="text" id="voterName" name="voterName">
         </div>
         <div>

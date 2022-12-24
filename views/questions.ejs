@@ -12,6 +12,7 @@
       <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a> > <a href="/elections/<%=id%>/questions">questions</a>
     </div>
     <%- include('header.ejs') %>
+    <a href="/signout"><button>SignOut</button></a>
     <h3>Welcome</h3>
     <h3><a href="/elections/<%=id%>"><%=election.name%></a></h3>
 
@@ -19,7 +20,7 @@
       <% for (let i=0; i < questions.length;i++){%>
       <li>
         <div>
-          <a href="/questions/<%=questions[i].id%>">
+          <a href="/elections/<%=id%>/questions/<%=questions[i].id%>">
             <%= questions[i].name %>
           </a>
           

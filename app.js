@@ -12,6 +12,7 @@ const session = require("express-session");
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
+const { Op } = require("sequelize");
 
 const saltRounds = 10;
 
@@ -53,7 +54,7 @@ passport.use(
       Voter.findOne({ where: { voterName } })
         .then(async (user) => {
           const result = await bcrypt.compare(password, user.password);
-          console.log(result, user.password, password);
+
           if (result) {
             return done(null, user);
           } else {
@@ -107,12 +108,10 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((cuser, done) => {
-  console.log("deserializing user");
-  console.log(cuser);
+  console.log("deserializing user", cuser._id);
   if (cuser.isAdmin) {
     User.findByPk(cuser._id)
       .then((user) => {
-        console.log(user);
         user.isAdmin = cuser.isAdmin;
         done(null, user);
       })
@@ -136,18 +135,75 @@ function isAdmin() {
     if (req.user.isAdmin === true) {
       next();
     } else {
-      res.redirect("/admin/error");
+      res.redirect("/login");
     }
   };
 }
 
 function isVoter() {
   return function (req, res, next) {
-    console.log("in isVoter function", req.user);
+    console.log("in isVoter function", req.user.id);
     if (req.user.isAdmin === false) {
       next();
     } else {
-      res.redirect("/voter/error");
+      req.flash("error", "Login as a voter to vote");
+      res.redirect(`/elections/${req.params.id}/voterlogin`);
+    }
+  };
+}
+
+function ensureVoterLoggedIn(options) {
+  if (typeof options == "string") {
+    options = { redirectTo: options };
+  }
+  options = options || {};
+
+  var setReturnTo =
+    options.setReturnTo === undefined ? true : options.setReturnTo;
+
+  return function (req, res, next) {
+    var url = options.redirectTo || `/elections/${req.params.id}/voterlogin`;
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+      if (setReturnTo && req.session) {
+        req.session.returnTo = req.originalUrl || req.url;
+      }
+      return res.redirect(url);
+    }
+    next();
+  };
+}
+
+function isEligible() {
+  return function (req, res, next) {
+    if (req.user.voteStatus === false) {
+      next();
+    } else {
+      req.flash("error", "You have already cast your vote");
+      res.redirect(`/elections/${req.params.id}/voterlogin`);
+    }
+  };
+}
+
+function electionNotRunning() {
+  return async function (req, res, next) {
+    const election = await Election.findByPk(req.params.id);
+    if (election.onGoingStatus === false) {
+      next();
+    } else {
+      req.flash("error", "Election running,cannot modify questions or answers");
+      res.redirect(`/elections/${req.params.id}`);
+    }
+  };
+}
+
+function electionRunning() {
+  return async function (req, res, next) {
+    const election = await Election.findByPk(req.params.id);
+    if (election.onGoingStatus === true) {
+      next();
+    } else {
+      req.flash("error", "Voting ended");
+      res.redirect(`/elections/${req.params.id}/results`);
     }
   };
 }
@@ -242,13 +298,51 @@ app.get(
 );
 
 app.put(
-  "/elections/:id",
+  "/elections/:id/start",
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
     try {
       const election = await Election.findByPk(request.params.id);
-      const updatedElection = await election.toggleElectionStatus();
+      const questions = await election.getQuestions();
+      const questionIds = questions.map((question) => {
+        return question.id;
+      });
+      await Option.update(
+        { count: 0 },
+        {
+          where: {
+            questionId: {
+              [Op.in]: questionIds,
+            },
+          },
+        }
+      );
+      await Voter.update(
+        { voteStatus: false },
+        {
+          where: {
+            electionId: request.params.id,
+          },
+        }
+      );
+      const updatedElection = await election.startAnElection();
+
+      response.json(updatedElection);
+    } catch (error) {
+      console.log(error);
+      response.status(420);
+    }
+  }
+);
+app.put(
+  "/elections/:id/end",
+  connectEnsureLogin.ensureLoggedIn(),
+  isAdmin(),
+  async (request, response) => {
+    try {
+      const election = await Election.findByPk(request.params.id);
+      const updatedElection = await election.endAnElection();
 
       response.json(updatedElection);
     } catch (error) {
@@ -278,6 +372,7 @@ app.delete(
 
 app.get(
   "/elections/:id/questions",
+  electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
@@ -296,7 +391,8 @@ app.get(
 //app.put(edit name)
 
 app.delete(
-  "questions/:id",
+  "/elections/:id/questions/:id",
+
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
@@ -311,6 +407,7 @@ app.delete(
 
 app.get(
   "/elections/:id/questions/new",
+  electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
@@ -328,6 +425,7 @@ app.get(
 
 app.post(
   "/elections/:id/questions/new",
+  electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
@@ -337,7 +435,7 @@ app.post(
         description: request.body.description,
         electionId: request.params.id,
       });
-      console.log(newQuestion);
+
       if (request.accepts("html")) {
         response.redirect(`/questions/${newQuestion.id}`);
       } else {
@@ -349,46 +447,83 @@ app.post(
   }
 );
 
-app.get(
-  "/questions/:id",
-  connectEnsureLogin.ensureLoggedIn(),
-  isAdmin(),
+// electionNotRunning(),
+// connectEnsureLogin.ensureLoggedIn(),
+// isAdmin(),
+app.get("/elections/:id/questions/:qid", async (request, response) => {
+  try {
+    const question = await Question.findByPk(request.params.qid);
+    const election = await question.getElection();
+
+    const options = await question.getOptions();
+    const noOfOptions = await question.countOptions();
+
+    response.render("manageQuestion", {
+      title: "Manage Question",
+      question: question,
+      options: options,
+      noOfOptions: noOfOptions,
+      election,
+      csrfToken: request.csrfToken(),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.put("/elections/:id/questions/:qid", async (request, response) => {
+  try {
+    const updatedQuestion = await Question.updateData(
+      request.params.qid,
+      request.body.name,
+      request.body.description
+    );
+    const res = await Option.resetCount(request.params.qid);
+
+    response.json(updatedQuestion);
+  } catch (error) {
+    console.log(error);
+    response.json(error);
+  }
+});
+
+app.put(
+  "/elections/:id/questions/:qid/options/:oid",
   async (request, response) => {
     try {
-      const question = await Question.findByPk(request.params.id);
-      const election = await question.getElection();
-      console.log(election);
-      const options = await question.getOptions();
-      const noOfOptions = await question.countOptions();
-      console.log();
-      response.render("manageQuestion", {
-        title: "Manage Question",
-        question: question,
-        options: options,
-        noOfOptions: noOfOptions,
-        election,
-        csrfToken: request.csrfToken(),
-      });
+      const updatedOption = await Option.update(
+        { name: request.body.name, count: 0 },
+        {
+          where: {
+            id: request.params.oid,
+          },
+        }
+      );
+      response.json(updatedOption);
     } catch (error) {
       console.log(error);
+      response.json(error);
     }
   }
 );
 
 app.post(
-  "/questions/:id/options/new",
+  "/elections/:id/questions/:qid/options/new",
+  electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
     try {
-      const question = await Question.findByPk(request.params.id);
+      const question = await Question.findByPk(request.params.qid);
       const newOption = await Option.create({
         name: request.body.name,
         count: 0,
-        questionId: request.params.id,
+        questionId: request.params.qid,
       });
       await question.addOption(newOption);
-      response.redirect(`/questions/${request.params.id}`);
+      response.redirect(
+        `/elections/${request.params.id}/questions/${request.params.qid}`
+      );
     } catch (error) {
       console.log(error);
     }
@@ -396,12 +531,13 @@ app.post(
 );
 
 app.delete(
-  "/options/:id",
+  "elections/:id/questions/:qid/options/:oid",
+  electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
     try {
-      const value = await Option.remove(request.params.id);
+      const value = await Option.remove(request.params.oid);
       response.json(value > 0 ? true : false);
     } catch (error) {
       console.log(error);
@@ -458,7 +594,7 @@ app.post(
         password: hashedPwd,
         electionId: request.params.id,
       });
-      console.log(newVoter);
+
       if (request.accepts("html")) {
         response.redirect(`/elections/${request.params.id}/voters`);
       } else {
@@ -493,8 +629,6 @@ app.post("/users", async (request, response) => {
   //   response.redirect("/signup")
   // }
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
-  console.log("checkboox:");
-  console.log(request.body);
 
   try {
     const user = await User.create({
@@ -524,10 +658,14 @@ app.post("/users", async (request, response) => {
 });
 
 app.get("/login", (request, response) => {
-  response.render("login", {
-    title: "Login",
-    csrfToken: request.csrfToken(),
-  });
+  if (request.user && request.user.isAdmin) {
+    response.redirect("/elections");
+  } else {
+    response.render("login", {
+      title: "Login",
+      csrfToken: request.csrfToken(),
+    });
+  }
 });
 
 app.post(
@@ -541,7 +679,7 @@ app.post(
   }
 );
 
-app.get("/elections/:id/voterlogin", (request, response) => {
+app.get("/elections/:id/voterlogin", electionRunning(), (request, response) => {
   response.render("voterLogin", {
     title: "Login",
     csrfToken: request.csrfToken(),
@@ -551,6 +689,7 @@ app.get("/elections/:id/voterlogin", (request, response) => {
 
 app.post(
   "/elections/:id/voterlogin",
+  electionRunning(),
   passport.authenticate("voter-local", {
     failureRedirect: "back",
     failureFlash: true,
@@ -560,24 +699,89 @@ app.post(
   }
 );
 
-app.get("/elections/:id/vote", async (request, response) => {
-  let optionsList = {};
-  let options;
-  const election = await Election.findByPk(request.params.id);
-  const questionsList = await Question.getAllQuestions(request.params.id);
-  for (let i = 0; i < questionsList.length; i++) {
-    options = await questionsList[i].getOptions();
-    console.log(options);
-    optionsList[questionsList[i].id] = options;
-  }
+app.get(
+  "/elections/:id/vote",
+  electionRunning(),
+  ensureVoterLoggedIn(),
+  isVoter(),
+  isEligible(),
+  async (request, response) => {
+    let optionsList = {};
+    let options;
+    const election = await Election.findByPk(request.params.id);
+    const questionsList = await Question.getAllQuestions(request.params.id);
+    for (let i = 0; i < questionsList.length; i++) {
+      options = await questionsList[i].getOptions();
 
-  console.log(optionsList);
-  response.render("vote", {
-    title: "Voting Session",
-    election,
-    questionsList,
-    optionsList,
-    csrfToken: request.csrfToken(),
+      optionsList[questionsList[i].id] = options;
+    }
+
+    response.render("vote", {
+      title: "Voting Session",
+      election,
+      questionsList,
+      optionsList,
+      csrfToken: request.csrfToken(),
+    });
+  }
+);
+
+app.post(
+  "/elections/:id/evalVote",
+  electionRunning(),
+  ensureVoterLoggedIn(),
+  isVoter(),
+  isEligible(),
+  async (request, response) => {
+    console.log(
+      "////////////////////////////////////////////////////////////////////////////////////////"
+    );
+    delete request.body._csrf;
+    for (const key in request.body) {
+      Option.incrementCount(request.body[key]);
+    }
+    await Voter.voted(request.user.id);
+    response.redirect(`/elections/${request.params.id}/thankyou`);
+  }
+);
+
+app.get(
+  "/elections/:id/thankyou",
+  ensureVoterLoggedIn(),
+  isVoter(),
+  (request, response) => {
+    response.render("thankyou", { title: "Thankyou", id: request.params.id });
+  }
+);
+
+app.get("/elections/:id/results", async (request, response) => {
+  const election = await Election.findByPk(request.params.id);
+  if (!election.onGoingStatus || (request.user && request.user.isAdmin)) {
+    let optionsList = {};
+    let options;
+    const questionsList = await Question.getAllQuestions(request.params.id);
+    for (let i = 0; i < questionsList.length; i++) {
+      options = await questionsList[i].getOptions();
+
+      optionsList[questionsList[i].id] = options;
+    }
+    response.render("results", {
+      title: "Results",
+      election,
+      questionsList,
+      optionsList,
+    });
+  } else {
+    response.send("Election Still going on wait for the results");
+  }
+});
+
+app.get("/signout", (request, response, next) => {
+  request.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    response.redirect("/");
   });
 });
 

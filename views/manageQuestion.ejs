@@ -5,25 +5,90 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <title><%=title%></title>
     <link rel="stylesheet" href="./css/index.css">
+    <script>
+      var token = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content")
+
+      function editQuestion(id,qid){
+        console.log("editing question...");
+        questionName=document.getElementById("questionName").innerText
+        questionDesc=document.getElementById("questionDesc").innerText
+        if (questionName===""){
+          window.alert("Question name cannot be empty")
+          window.location.reload()
+        }else{
+          console.log(questionName);
+          fetch(`/elections/${id}/questions/${qid}`, {
+                method: "put",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name:questionName,
+                    description:questionDesc,
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+      }
+      function editOption(id,qid,oid){
+        console.log("editing option...");
+        optionName=document.getElementById(`${oid}`).innerText
+        if (optionName===""){
+          window.alert("Answer name cannot be empty")
+          window.location.reload()
+        }else{
+          console.log(optionName);
+          fetch(`/elections/${id}/questions/${qid}/options/${oid}`, {
+                method: "put",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name:optionName,
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+      }
+
+
+    </script>
   </head>
   <body>
     <div>
       <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=election.id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/questions">questions</a>>
     </div>
     <%- include('header.ejs') %>
-    <b><%=question.name%></b>
-    <p><%=question.description%></p>
+    <a href="/signout"><button>SignOut</button></a>
+<div>
+    <b id="questionName" ondblclick="qname=document.getElementById('questionName');qname.contentEditable=true;qname.focus();document.getElementById('quesSave').style.display=`block`"><%=question.name%></b>
+</div>
+    <p id="questionDesc" ondblclick="qdesc=document.getElementById('questionDesc');qdesc.contentEditable=true;qdesc.focus();document.getElementById('quesSave').style.display=`block`"><%=question.description%></p>
+    <button style="display: none;" id="quesSave" onclick="editQuestion(<%=election.id%>,<%=question.id%>)">Save Changes</button>
+    
     <% if(noOfOptions < 2 ){%>
     <small style="color: red;">please provide atleast two options for a question</small>
     <%}%>
+
     <ul>
       <% for (let i=0; i < options.length;i++){%>
       <li>
         <div>
-          <%= options[i].name %>
-          <a href="#">edit</a>
+          <u id="<%=options[i].id%>" ondblclick="opt=document.getElementById('<%=options[i].id%>');opt.contentEditable=true;opt.focus();document.getElementById('btn<%=options[i].id%>').style.display=`initial`"><%= options[i].name %></u>
+          <button style="display: none;" id="btn<%=options[i].id%>" onclick="editOption(<%=election.id%>,<%=question.id%>,<%=options[i].id%>)">Save Changes</button>
           <a href="#">del</a>
         </div>
       </li>
@@ -33,9 +98,9 @@
 
     <form action="/questions/<%=question.id%>/options/new" method="post">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <input type="text" placeholder="Add new option" name="name" />
+      <input type="text" placeholder="Add new option" name="name" autofocus/>
       <button type="submit">Add</button>
     </form>
-
+    
   </body>
 </html>

@@ -12,8 +12,8 @@
             .querySelector('meta[name="csrf-token"]')
             .getAttribute("content")
 
-        function toggleStatus(id){
-            fetch(`/elections/${id}`, {
+        function startElection(id){
+            fetch(`/elections/${id}/start`, {
                 method: "put",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -23,6 +23,21 @@
                 .then((res) => {
                     if (res.ok) {
                         window.location.reload();
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+        function endElection(id){
+            fetch(`/elections/${id}/end`, {
+                method: "put",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.location.replace(`/elections/${id}/results`);
                     }
                 })
                 .catch((err) => console.log(err));
@@ -49,6 +64,8 @@
         <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=electionName%></a>
       </div>
     <%- include('header.ejs') %>
+    <a href="/signout"><button>SignOut</button></a>
+
     <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
     <h4>There are <%=quesCount%> questions in the ballet of this election</h4>
     <% if (! onGoingStatus){%>
@@ -60,8 +77,16 @@
     <h4>There are currently <%=voterCount%> voters assigned for this election</h4>
     <a href="/elections/<%=id%>/voters">Manage voters</a>
     <div>
-        <button onclick="toggleStatus(<%=id%>)"><%= onGoingStatus?"End":"Start"%></button>
-        <button onclick="deleteElection(<%=id%>)">Delete</button>
+        <%if(!onGoingStatus){%>
+            <button onclick="startElection(<%=id%>)">Start Election</button>
+            <%}else{%>
+                <button onclick="endElection(<%=id%>)">End Election</button>
+        <%}%>
+
+        <button onclick="deleteElection(<%=id%>)">Delete</button><br>
+        <%if(onGoingStatus){%>
+            <a href="/elections/<%=id%>/results"><button>Results</button></a>
+        <%}%>
     </div>
 
     <script>

@@ -46,6 +46,17 @@ module.exports = (sequelize, DataTypes) => {
         cascade: true,
       });
     }
+
+    static async updateData(id, name, description) {
+      return await Question.update(
+        { name: name, description: description },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+    }
   }
   Question.init(
     {

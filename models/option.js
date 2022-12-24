@@ -21,6 +21,25 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+
+    static async resetCount(id) {
+      return Option.update(
+        { count: 0 },
+        {
+          where: {
+            questionId: id,
+          },
+        }
+      );
+    }
+
+    static async incrementCount(id) {
+      return Option.increment("count", {
+        where: {
+          id,
+        },
+      });
+    }
   }
   Option.init(
     {
