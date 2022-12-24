@@ -12,21 +12,21 @@
             .querySelector('meta[name="csrf-token"]')
             .getAttribute("content")
 
-        function startElection(id){
-            fetch(`/elections/${id}/start`, {
-                method: "put",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    "_csrf": token
-                })
-            })
-                .then((res) => {
-                    if (res.ok) {
-                        window.location.reload();
-                    }
-                })
-                .catch((err) => console.log(err));
-        }
+        // function startElection(id){
+        //     fetch(`/elections/${id}/start`, {
+        //         method: "put",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify({
+        //             "_csrf": token
+        //         })
+        //     })
+        //         .then((res) => {
+        //             if (res.ok) {
+        //                 window.location.reload();
+        //             }
+        //         })
+        //         .catch((err) => console.log(err));
+        // }
         function endElection(id){
             fetch(`/elections/${id}/end`, {
                 method: "put",
@@ -78,7 +78,8 @@
     <a href="/elections/<%=id%>/voters">Manage voters</a>
     <div>
         <%if(!onGoingStatus){%>
-            <button onclick="startElection(<%=id%>)">Start Election</button>
+            <a href="/elections/<%=id%>/electionPreview"><button>Preview Election</button></a>
+            
             <%}else{%>
                 <button onclick="endElection(<%=id%>)">End Election</button>
         <%}%>

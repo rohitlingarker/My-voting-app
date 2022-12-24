@@ -437,7 +437,7 @@ app.post(
       });
 
       if (request.accepts("html")) {
-        response.redirect(`/questions/${newQuestion.id}`);
+        response.redirect(`/elections/${request.params.id}/questions/${newQuestion.id}`);
       } else {
         response.json(newQuestion);
       }
@@ -712,8 +712,9 @@ app.get(
     const questionsList = await Question.getAllQuestions(request.params.id);
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
-
-      optionsList[questionsList[i].id] = options;
+      if (options.length>1){
+        optionsList[questionsList[i].id] = options;
+      }
     }
 
     response.render("vote", {
@@ -785,4 +786,27 @@ app.get("/signout", (request, response, next) => {
   });
 });
 
+app.get("/elections/:id/electionPreview",async (request,response)=>{
+  let optionsList = {};
+    let options;
+    const election = await Election.findByPk(request.params.id);
+    const questionsList = await Question.getAllQuestions(request.params.id);
+    let allQuesHaveAtleast2=true
+    for (let i = 0; i < questionsList.length; i++) {
+      options = await questionsList[i].getOptions();
+      if (options.length<2){
+        allQuesHaveAtleast2=false
+      }
+      optionsList[questionsList[i].id] = options;
+    }
+    
+    response.render("electionPreview", {
+      title: "Preview",
+      election,
+      questionsList,
+      optionsList,
+      allQuesHaveAtleast2,
+      csrfToken: request.csrfToken(),
+    });
+})
 module.exports = app;

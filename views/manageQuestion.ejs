@@ -96,7 +96,7 @@
       
     </ul>
 
-    <form action="/questions/<%=question.id%>/options/new" method="post">
+    <form action="/elections/<%=election.id%>/questions/<%=question.id%>/options/new" method="post">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <input type="text" placeholder="Add new option" name="name" autofocus/>
       <button type="submit">Add</button>
