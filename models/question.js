@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
 
-    static async removeQuestion({ id }) {
+    static async removeQuestion(id) {
       return await this.destroy({
         where: {
           id,

@@ -31,7 +31,7 @@
 
                         <%for(j in optionsList[questionsList[i].id]){%>
                             <div>
-                                <input type="radio" name="<%=questionsList[i].id%>" id="<%=optionsList[questionsList[i].id][j].id%>" value="" required>
+                                <input type="radio" name="<%=questionsList[i].id%>" id="<%=optionsList[questionsList[i].id][j].id%>" value="<%=optionsList[questionsList[i].id][j].id%>" required>
                                 <label for="<%=optionsList[questionsList[i].id][j].id%>">
                                     <%=optionsList[questionsList[i].id][j].name%>
                                 </label>

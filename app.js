@@ -391,14 +391,20 @@ app.get(
 //app.put(edit name)
 
 app.delete(
-  "/elections/:id/questions/:id",
-
+  "/elections/:id/questions/:qid",
+  electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
   async (request, response) => {
     try {
-      const value = await Question.removeQuestion(request.params.id);
-      response.json(value > 0 ? true : false);
+      const election = await Election.findByPk(request.params.id)
+      const eQuestions = await election.getQuestions()
+      if (eQuestions.length<2){
+        response.status(300).json(false)
+      }else{
+      const value = await Question.removeQuestion(request.params.qid);
+      response.status(200).json(value > 0 ? true : false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -447,10 +453,11 @@ app.post(
   }
 );
 
-// electionNotRunning(),
-// connectEnsureLogin.ensureLoggedIn(),
-// isAdmin(),
-app.get("/elections/:id/questions/:qid", async (request, response) => {
+app.get("/elections/:id/questions/:qid", 
+electionNotRunning(),
+connectEnsureLogin.ensureLoggedIn(),
+isAdmin(),
+async (request, response) => {
   try {
     const question = await Question.findByPk(request.params.qid);
     const election = await question.getElection();
@@ -531,7 +538,7 @@ app.post(
 );
 
 app.delete(
-  "elections/:id/questions/:qid/options/:oid",
+  "/elections/:id/questions/:qid/options/:oid",
   electionNotRunning(),
   connectEnsureLogin.ensureLoggedIn(),
   isAdmin(),
@@ -738,8 +745,9 @@ app.post(
       "////////////////////////////////////////////////////////////////////////////////////////"
     );
     delete request.body._csrf;
+    console.log(request.body);
     for (const key in request.body) {
-      Option.incrementCount(request.body[key]);
+      await Option.incrementCount(request.body[key]);
     }
     await Voter.voted(request.user.id);
     response.redirect(`/elections/${request.params.id}/thankyou`);
@@ -763,8 +771,9 @@ app.get("/elections/:id/results", async (request, response) => {
     const questionsList = await Question.getAllQuestions(request.params.id);
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
-
+      if(options.length>1){
       optionsList[questionsList[i].id] = options;
+      }
     }
     response.render("results", {
       title: "Results",
@@ -792,10 +801,13 @@ app.get("/elections/:id/electionPreview",async (request,response)=>{
     const election = await Election.findByPk(request.params.id);
     const questionsList = await Question.getAllQuestions(request.params.id);
     let allQuesHaveAtleast2=true
+    let atleastOneques2=false
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
       if (options.length<2){
         allQuesHaveAtleast2=false
+      }else{
+        atleastOneques2=true
       }
       optionsList[questionsList[i].id] = options;
     }
@@ -806,7 +818,13 @@ app.get("/elections/:id/electionPreview",async (request,response)=>{
       questionsList,
       optionsList,
       allQuesHaveAtleast2,
+      atleastOneques2,
       csrfToken: request.csrfToken(),
     });
 })
+
+
+
+
+
 module.exports = app;

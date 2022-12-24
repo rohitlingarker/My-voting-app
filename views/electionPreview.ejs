@@ -16,9 +16,14 @@
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content")
 
-    function startElection(id, bool) {
+    function startElection(id, allQ2,atL1Q2) {
         let allsett=true
-        if (!bool) {
+        if(!atL1Q2){
+            alert("No questions have atleast 2 options")
+            return
+        }
+        
+        if (!allQ2) {
             allsett=window.confirm("It appears that some of the questions do not have a minimum (2) options,If you proceed such questions will not be seen in election.Proceed?") 
         }
         if (allsett){
@@ -43,7 +48,7 @@
 
 <body>
     <%- include("header.ejs")%>
-        <button onclick="startElection(<%=election.id%>,<%=allQuesHaveAtleast2%>)">Start Election</button>
+        <button onclick="startElection(<%=election.id%>,<%=allQuesHaveAtleast2%>,<%=atleastOneques2%>)">Start Election</button>
 
         <h2>
             <%=election.name%>

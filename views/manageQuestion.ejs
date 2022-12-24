@@ -64,6 +64,42 @@
         }
       }
 
+      function deleteOption(id,qid,oid){
+        fetch(`/elections/${id}/questions/${qid}/options/${oid}`, {
+                method: "delete",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch((err) => console.log(err));
+      }
+      function deleteQuestion(id,qid){
+        fetch(`/elections/${id}/questions/${qid}`, {
+                method: "delete",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    console.log(res)
+                    if (res.status===200) {
+                        window.location.replace(`/elections/${id}/questions`);
+                    }else if(res.status===300){
+                      window.alert("Cannot Delete the only question in the ballat")
+                      window.location.reload()
+                    }
+          })
+                
+                .catch((err) => console.log(err));
+      }
+
 
     </script>
   </head>
@@ -73,6 +109,7 @@
     </div>
     <%- include('header.ejs') %>
     <a href="/signout"><button>SignOut</button></a>
+    
 <div>
     <b id="questionName" ondblclick="qname=document.getElementById('questionName');qname.contentEditable=true;qname.focus();document.getElementById('quesSave').style.display=`block`"><%=question.name%></b>
 </div>
@@ -89,7 +126,7 @@
         <div>
           <u id="<%=options[i].id%>" ondblclick="opt=document.getElementById('<%=options[i].id%>');opt.contentEditable=true;opt.focus();document.getElementById('btn<%=options[i].id%>').style.display=`initial`"><%= options[i].name %></u>
           <button style="display: none;" id="btn<%=options[i].id%>" onclick="editOption(<%=election.id%>,<%=question.id%>,<%=options[i].id%>)">Save Changes</button>
-          <a href="#">del</a>
+          <button onclick="deleteOption(<%= election.id%>,<%= question.id%>,<%=options[i].id%>)">del</button>
         </div>
       </li>
       <% } %>
@@ -101,6 +138,6 @@
       <input type="text" placeholder="Add new option" name="name" autofocus/>
       <button type="submit">Add</button>
     </form>
-    
+    <button onclick="deleteQuestion(<%= election.id%>,<%= question.id%>)">Delete Question</button>
   </body>
 </html>
