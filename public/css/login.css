@@ -1,0 +1,79 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Lora", serif;
+}
+body {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  height: 100vh;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body > div {
+  background-color: #fff4;
+  padding: 2rem;
+  border-radius: 30px;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+form > * {
+  margin: 20px 2px;
+}
+form button {
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+form div {
+  display: flex;
+  max-width: 250px;
+  justify-content: space-between;
+}
+
+form input {
+  border: #fff8 1px solid;
+  background-color: #fff6;
+  border-radius: 5px;
+  height: 1.2rem;
+  padding: 1px;
+}
+
+form input:focus {
+  border: #fff 2px solid;
+}
+
+form button {
+  background-color: #fff5;
+  border-radius: 20px;
+  border: #fff7 1px solid;
+  padding: 2px 0px;
+  font-family: "Lora", serif;
+  font-weight: 550;
+}

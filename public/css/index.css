@@ -1,4 +1,49 @@
-a{
-  text-decoration: none;
-  color: #000;
+body {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  height: 100vh;
+  font-family: "Lora", serif;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  margin: 4rem;
+  font-size: 70px;
+  background-color: #ffffff15;
+  padding: 2px 10px;
+  border-radius: 30px;
+  backdrop-filter: blur(100px);
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.buttons button {
+  width: 150px;
+  height: 60px;
+  background-color: #fff5;
+  border: none;
+  border-radius: 30px;
+  font-size: 20px;
+  box-shadow: inset 3px 3px #fff3, 3px 3px #0003;
+  color: #fff9;
 }

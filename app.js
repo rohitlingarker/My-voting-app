@@ -397,13 +397,13 @@ app.delete(
   isAdmin(),
   async (request, response) => {
     try {
-      const election = await Election.findByPk(request.params.id)
-      const eQuestions = await election.getQuestions()
-      if (eQuestions.length<2){
-        response.status(300).json(false)
-      }else{
-      const value = await Question.removeQuestion(request.params.qid);
-      response.status(200).json(value > 0 ? true : false);
+      const election = await Election.findByPk(request.params.id);
+      const eQuestions = await election.getQuestions();
+      if (eQuestions.length < 2) {
+        response.status(300).json(false);
+      } else {
+        const value = await Question.removeQuestion(request.params.qid);
+        response.status(200).json(value > 0 ? true : false);
       }
     } catch (error) {
       console.log(error);
@@ -443,7 +443,9 @@ app.post(
       });
 
       if (request.accepts("html")) {
-        response.redirect(`/elections/${request.params.id}/questions/${newQuestion.id}`);
+        response.redirect(
+          `/elections/${request.params.id}/questions/${newQuestion.id}`
+        );
       } else {
         response.json(newQuestion);
       }
@@ -453,30 +455,32 @@ app.post(
   }
 );
 
-app.get("/elections/:id/questions/:qid", 
-electionNotRunning(),
-connectEnsureLogin.ensureLoggedIn(),
-isAdmin(),
-async (request, response) => {
-  try {
-    const question = await Question.findByPk(request.params.qid);
-    const election = await question.getElection();
+app.get(
+  "/elections/:id/questions/:qid",
+  electionNotRunning(),
+  connectEnsureLogin.ensureLoggedIn(),
+  isAdmin(),
+  async (request, response) => {
+    try {
+      const question = await Question.findByPk(request.params.qid);
+      const election = await question.getElection();
 
-    const options = await question.getOptions();
-    const noOfOptions = await question.countOptions();
+      const options = await question.getOptions();
+      const noOfOptions = await question.countOptions();
 
-    response.render("manageQuestion", {
-      title: "Manage Question",
-      question: question,
-      options: options,
-      noOfOptions: noOfOptions,
-      election,
-      csrfToken: request.csrfToken(),
-    });
-  } catch (error) {
-    console.log(error);
+      response.render("manageQuestion", {
+        title: "Manage Question",
+        question: question,
+        options: options,
+        noOfOptions: noOfOptions,
+        election,
+        csrfToken: request.csrfToken(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
-});
+);
 
 app.put("/elections/:id/questions/:qid", async (request, response) => {
   try {
@@ -719,7 +723,7 @@ app.get(
     const questionsList = await Question.getAllQuestions(request.params.id);
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
-      if (options.length>1){
+      if (options.length > 1) {
         optionsList[questionsList[i].id] = options;
       }
     }
@@ -771,8 +775,8 @@ app.get("/elections/:id/results", async (request, response) => {
     const questionsList = await Question.getAllQuestions(request.params.id);
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
-      if(options.length>1){
-      optionsList[questionsList[i].id] = options;
+      if (options.length > 1) {
+        optionsList[questionsList[i].id] = options;
       }
     }
     response.render("results", {
@@ -795,36 +799,32 @@ app.get("/signout", (request, response, next) => {
   });
 });
 
-app.get("/elections/:id/electionPreview",async (request,response)=>{
+app.get("/elections/:id/electionPreview", async (request, response) => {
   let optionsList = {};
-    let options;
-    const election = await Election.findByPk(request.params.id);
-    const questionsList = await Question.getAllQuestions(request.params.id);
-    let allQuesHaveAtleast2=true
-    let atleastOneques2=false
-    for (let i = 0; i < questionsList.length; i++) {
-      options = await questionsList[i].getOptions();
-      if (options.length<2){
-        allQuesHaveAtleast2=false
-      }else{
-        atleastOneques2=true
-      }
-      optionsList[questionsList[i].id] = options;
+  let options;
+  const election = await Election.findByPk(request.params.id);
+  const questionsList = await Question.getAllQuestions(request.params.id);
+  let allQuesHaveAtleast2 = true;
+  let atleastOneques2 = false;
+  for (let i = 0; i < questionsList.length; i++) {
+    options = await questionsList[i].getOptions();
+    if (options.length < 2) {
+      allQuesHaveAtleast2 = false;
+    } else {
+      atleastOneques2 = true;
     }
-    
-    response.render("electionPreview", {
-      title: "Preview",
-      election,
-      questionsList,
-      optionsList,
-      allQuesHaveAtleast2,
-      atleastOneques2,
-      csrfToken: request.csrfToken(),
-    });
-})
+    optionsList[questionsList[i].id] = options;
+  }
 
-
-
-
+  response.render("electionPreview", {
+    title: "Preview",
+    election,
+    questionsList,
+    optionsList,
+    allQuesHaveAtleast2,
+    atleastOneques2,
+    csrfToken: request.csrfToken(),
+  });
+});
 
 module.exports = app;
