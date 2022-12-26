@@ -210,7 +210,7 @@ function electionRunning() {
 
 app.get("/", async function (request, response) {
   // response.json("hi hello test")
-  response.render("index", { title: "My voying app" });
+  response.render("index", { title: "My voting app" });
   // response.render("index");
 });
 app.use(express.static(path.join(__dirname, "public")));
