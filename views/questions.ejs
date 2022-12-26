@@ -18,18 +18,18 @@
     
     <h3><a href="/elections/<%=id%>"><%=election.name%></a> - ballot</h3>
 
-    <ul>
-      <% for (let i=0; i < questions.length;i++){%>
-      <li>
-        <div>
-          <a href="/elections/<%=id%>/questions/<%=questions[i].id%>">
+    <table>
+      <%for (let i=0; i < questions.length;i++){%>
+      <tr>
+        <td>
+          <%=i+1%> . <a href="/elections/<%=id%>/questions/<%=questions[i].id%>">
             <%= questions[i].name %>
           </a>
           
-        </div>
-      </li>
+        </td>
+      </tr>
       <% } %>
-    </ul>
+    </table>
 
     <a href="/elections/<%=id%>/questions/new"><button>Create New Question</button></a>
   </body>

@@ -15,25 +15,28 @@
         <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a>>
       </div>
     <%- include('header.ejs') %>
-    <h3>Welcome</h3>
-    <h3><a href="/elections/<%=id%>"><%=election.name%></a></h3>
+    <h3><a href="/elections/<%=id%>"><%=election.name%></a>-Registered Voters</h3>
 
-    <ul>
+    <table>
       <% for (let i=0; i < voters.length;i++){%>
-      <li>
-        <div>
-          <input type="text" value="<%= voters[i].voterName %>">
-          <input type="password" id="<%= voters[i].id %>" value="<%= voters[i].password %>"
-          
-          onfocus="(()=>{document.getElementById('<%= voters[i].id %>').type='text';})()" 
-          onblur="(()=>{document.getElementById('<%= voters[i].id %>').type='password';})()"
-          >
-        </div>
-      </li>
+      <tr>
+        
+          <td>
+            <input type="text" value="<%= voters[i].voterName %>">
+          </td>
+          <td>
+            <input type="password" id="<%= voters[i].id %>" value="<%= voters[i].password %>"
+            
+            onfocus="(()=>{document.getElementById('<%= voters[i].id %>').type='text';})()" 
+            onblur="(()=>{document.getElementById('<%= voters[i].id %>').type='password';})()"
+            >
+          </td>
+        
+      </tr>
       <% } %>
-    </ul>
+    </table>
 
-    <a href="/elections/<%=id%>/voters/new">Create New Voter</a>
+    <a href="/elections/<%=id%>/voters/new"><button>Create New Voter</button></a>
 
     
   </body>

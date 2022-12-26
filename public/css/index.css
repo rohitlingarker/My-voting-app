@@ -130,4 +130,28 @@ h3{
     border-radius: 30px;
   }
 
+table{
+  width: auto;
+  margin-left: 2rem;
+  border-spacing: 0 0.7rem;
+}
+
+input{
+  outline: none;
+}
+
+td{
+  background-color: #fff5;
+  box-shadow: inset 3px 3px #0002,inset -3px -3px #fff3;
+    border-radius: 30px;
+  margin: 0.7rem 0.5rem;
+  padding: 0.2rem 0.7rem;
+}
+
+
+td input{
+  background-color: transparent;
+  outline: none;
+  border: none;
   
+}
