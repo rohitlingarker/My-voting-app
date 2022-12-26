@@ -5,7 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%=title%></title>
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
+    <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
   </head>
   <body>
     <div>
@@ -13,8 +15,8 @@
     </div>
     <%- include('header.ejs') %>
     <a href="/signout"><button>SignOut</button></a>
-    <h3>Welcome</h3>
-    <h3><a href="/elections/<%=id%>"><%=election.name%></a></h3>
+    
+    <h3><a href="/elections/<%=id%>"><%=election.name%></a> - ballot</h3>
 
     <ul>
       <% for (let i=0; i < questions.length;i++){%>
@@ -29,6 +31,6 @@
       <% } %>
     </ul>
 
-    <a href="/elections/<%=id%>/questions/new">Create New Question</a>
+    <a href="/elections/<%=id%>/questions/new"><button>Create New Question</button></a>
   </body>
 </html>

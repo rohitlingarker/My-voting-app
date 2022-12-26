@@ -5,8 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="/css/index.css">
     <title><%=title%></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
+    <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
     <script>
         var token = document
             .querySelector('meta[name="csrf-token"]')
@@ -69,13 +71,13 @@
     <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
     <h4>There are <%=quesCount%> questions in the ballet of this election</h4>
     <% if (! onGoingStatus){%>
-        <a href="/elections/<%=id%>/questions">Manage your questions</a>
+        <a href="/elections/<%=id%>/questions"><button>Manage your questions</button></a>
     <%}else{%>
         <p>election running at:</p>
         <a id="vote" href="/elections/<%=id%>/vote">/elections/<%=id%>/vote</a>
         <%}%>
     <h4>There are currently <%=voterCount%> voters assigned for this election</h4>
-    <a href="/elections/<%=id%>/voters">Manage voters</a>
+    <a href="/elections/<%=id%>/voters"><button>Manage voters</button></a>
     <div>
         <%if(!onGoingStatus){%>
             <a href="/elections/<%=id%>/electionPreview"><button>Preview Election</button></a>
