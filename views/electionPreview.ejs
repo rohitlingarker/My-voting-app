@@ -60,11 +60,14 @@
         <% let questionNo=1 %>
             <% for(let i=0;i<questionsList.length;i++){  %>
                 <section>
-                    <em>Question<%=questionNo%></em>
-                    <b>
-                        <%=questionsList[i].name%>
-                    </b><br>
-                    <p>
+                    <div>
+
+                        <em>Question<%=questionNo%>:</em>
+                        <b>
+                            <%=questionsList[i].name%>
+                        </b>
+                    </div>
+                    <p> <span>Description:</span>
                         <%=questionsList[i].description%>
                     </p>
 

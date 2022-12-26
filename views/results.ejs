@@ -17,11 +17,11 @@
     <%- include("header.ejs")%>
 
     
+    <h3>
+        <%=election.name%>
+    </h3>
         <h2>Results</h2>
 
-        <h3>
-            <%=election.name%>
-        </h3>
         <% if(messages && messages.error && messages.error.length > 0)  { %>
             <% for(var i=0; i<messages.error.length; i++) { %>
                     <li><%= messages.error[i] %></li>
@@ -30,10 +30,13 @@
         <% let questionNo=1 %>
             <% for(let i=0;i<questionsList.length;i++){ if(optionsList[questionsList[i].id]){ %>
                     <section>
-                        <em>Question<%=questionNo%></em>
-                        <b>
-                            <%=questionsList[i].name%>
-                        </b><br>
+                        <div>
+
+                            <em>Question<%=questionNo%>:</em>
+                            <b>
+                                <%=questionsList[i].name%>
+                            </b>
+                        </div>
                         
                         <ul>
                         <%for(j in optionsList[questionsList[i].id]){%>

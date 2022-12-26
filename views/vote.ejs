@@ -25,20 +25,24 @@
         <% let questionNo=1 %>
             <% for(let i=0;i<questionsList.length;i++){ if(optionsList[questionsList[i].id]){ %>
                     <section>
-                        <em>Question<%=questionNo%></em>
-                        <b>
-                            <%=questionsList[i].name%>
-                        </b><br>
+                        <div>
+                            <em>Question<%=questionNo%></em>
+                            <b>
+                                <%=questionsList[i].name%>
+                            </b>
+                        </div>
                         <p><%=questionsList[i].description%></p>
+                        <ul>
 
-                        <%for(j in optionsList[questionsList[i].id]){%>
-                            <div>
-                                <input type="radio" name="<%=questionsList[i].id%>" id="<%=optionsList[questionsList[i].id][j].id%>" value="<%=optionsList[questionsList[i].id][j].id%>" required>
-                                <label for="<%=optionsList[questionsList[i].id][j].id%>">
-                                    <%=optionsList[questionsList[i].id][j].name%>
-                                </label>
-                            </div>
-                            <%}%>
+                            <%for(j in optionsList[questionsList[i].id]){%>
+                                <li>
+                                    <input type="radio" name="<%=questionsList[i].id%>" id="<%=optionsList[questionsList[i].id][j].id%>" value="<%=optionsList[questionsList[i].id][j].id%>" required>
+                                    <label for="<%=optionsList[questionsList[i].id][j].id%>">
+                                        <%=optionsList[questionsList[i].id][j].name%>
+                                    </label>
+                                </li>
+                                <%}%>
+                        </ul>
                     </section>
                     
                     <% questionNo++; }}%>
