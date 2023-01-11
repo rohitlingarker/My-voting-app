@@ -1,3 +1,14 @@
+var livereload = require("livereload");
+var connectLiveReload = require("connect-livereload");
+
+const liveReloadServer = livereload.createServer();
+liveReloadServer.server.once("connection", () => {
+  setTimeout(() => {
+    liveReloadServer.refresh("/");
+  }, 100);
+});
+
+
 /* eslint-disable no-unused-vars */
 const express = require("express");
 const app = express();
@@ -14,7 +25,11 @@ const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
 const { Op } = require("sequelize");
 
+
 const saltRounds = 10;
+
+app.use(connectLiveReload());
+
 
 app.set("views", path.join(__dirname, "views"));
 
@@ -208,12 +223,27 @@ function electionRunning() {
   };
 }
 
-app.get("/", async function (request, response) {
+app.get("/",async (request,response)=>{
+  response.render("index")
+})
+
+app.get("/admin", async function (request, response) {
   // response.json("hi hello test")
-  response.render("index", { title: "My voting app" });
+  response.render("admin", { title: "My voting app" });
   // response.render("index");
 });
 app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/liveElections",async (request,response)=>{
+  const onGoingElectionsList = await Election.findAll({
+    where:{
+      onGoingStatus:true
+    }
+  })
+  response.render("liveElections",{
+    data:onGoingElectionsList
+  })
+})
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

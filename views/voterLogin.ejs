@@ -9,7 +9,6 @@
     <title>
         <%= title %>
     </title>
-    <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
@@ -17,30 +16,26 @@
 </head>
 
 <body>
-    <div>
+    
+    <%- include('header.ejs') %>
         <div >
-            <%- include('header.ejs') %>
-            <h6>Login to your account(voter)</h6>
             <form action="/elections/<%=id%>/voterlogin" method="post">
-                <% if(messages && messages.error && messages.error.length > 0)  { %>
-                    <% for(var i=0; i<messages.error.length; i++) { %>
-                            <li><%= messages.error[i] %></li>
-                    <% } %>
-                  <% } %>
+                <h3>Login to your account(voter)</h3>
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <div >
-                    <label for="voterName">Voter ID:</label>
-                    <input type="voterName" name="voterName" >
+                <div class="inputBox">
+                    <input type="voterName" name="voterName" placeholder="Voter Id"><i></i>
                 </div>
-                <div >
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" >
+                <div class="inputBox">
+                    <input type="password" name="password" placeholder="Password"><i></i>
                 </div>
-                <div >
-                    <button type="submit">Sign in</button>
-                </div>
+                <input type="submit" value="Sign-in">
             </form>
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li><%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
         </div>
-    </div>
+    
 </body>
 </html>
