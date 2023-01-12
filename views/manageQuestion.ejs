@@ -7,7 +7,7 @@
     
     <meta name="csrf-token" content="<%= csrfToken %>">
     <title><%=title%></title>
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/elections.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
     <script>
@@ -106,40 +106,51 @@
     </script>
   </head>
   <body>
-    <div>
+    <div class="nav">
       <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=election.id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/questions">questions</a>>
     </div>
     <%- include('header.ejs') %>
-    <a href="/signout"><button>SignOut</button></a>
-    
-<div>
-    <b id="questionName" ondblclick="qname=document.getElementById('questionName');qname.contentEditable=true;qname.focus();document.getElementById('quesSave').style.display=`block`"><%=question.name%></b>
-</div>
-    <p id="questionDesc" ondblclick="qdesc=document.getElementById('questionDesc');qdesc.contentEditable=true;qdesc.focus();document.getElementById('quesSave').style.display=`block`"><%=question.description%></p>
-    <button style="display: none;" id="quesSave" onclick="editQuestion(<%=election.id%>,<%=question.id%>)">Save Changes</button>
+    <div class="container">
+
+      <a href="/signout" class="signout">SignOut</a>
+      
+      
+    <h3 id="questionName" ondblclick="qname=document.getElementById('questionName');qname.contentEditable=true;qname.focus();document.getElementById('quesSave').style.display=`block`"><%=question.name%></h3>
+
+    <h4 id="questionDesc" ondblclick="qdesc=document.getElementById('questionDesc');qdesc.contentEditable=true;qdesc.focus();document.getElementById('quesSave').style.display=`block`"><%=question.description%></h4>
+    <button class="save-btn" style="display: none;" id="quesSave" onclick="editQuestion(<%=election.id%>,<%=question.id%>)">Save Changes</button>
     
     <% if(noOfOptions < 2 ){%>
-    <small style="color: red;">please provide atleast two options for a question</small>
+    <small>please provide atleast two options for a question</small>
     <%}%>
 
     <ul>
       <% for (let i=0; i < options.length;i++){%>
       <li>
-        <div>
-          <u id="<%=options[i].id%>" ondblclick="opt=document.getElementById('<%=options[i].id%>');opt.contentEditable=true;opt.focus();document.getElementById('btn<%=options[i].id%>').style.display=`initial`"><%= options[i].name %></u>
-          <button style="display: none;" id="btn<%=options[i].id%>" onclick="editOption(<%=election.id%>,<%=question.id%>,<%=options[i].id%>)">Save Changes</button>
-          <button onclick="deleteOption(<%= election.id%>,<%= question.id%>,<%=options[i].id%>)">del</button>
+        <u id="<%=options[i].id%>" ondblclick="opt=document.getElementById('<%=options[i].id%>');opt.contentEditable=true;opt.focus();document.getElementById('btn<%=options[i].id%>').style.display=`initial`"><%= options[i].name %></u>
+        <div class="icons">
+          <button class="save-icon" style="display: none;" id="btn<%=options[i].id%>" onclick="editOption(<%=election.id%>,<%=question.id%>,<%=options[i].id%>)">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>            
+          </button>
+          <button class="del-icon" onclick="deleteOption(<%= election.id%>,<%= question.id%>,<%=options[i].id%>)">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>            
+          </button>
         </div>
       </li>
       <% } %>
       
     </ul>
+  </div>
 
     <form action="/elections/<%=election.id%>/questions/<%=question.id%>/options/new" method="post">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <input type="text" placeholder="Add new option" name="name" autofocus/>
       <button type="submit">Add</button>
     </form>
-    <button onclick="deleteQuestion(<%= election.id%>,<%= question.id%>)">Delete Question</button>
+    <button class="del" onclick="deleteQuestion(<%= election.id%>,<%= question.id%>)">Delete Question</button>
   </body>
 </html>

@@ -18,25 +18,25 @@
 </head>
 
 <body>
-    <div>
-
-        <%- include('header.ejs') %>
-
+    <%- include('header.ejs') %>
+        <div class="container">
             <form action="/elections/<%=id%>/voters/new" method="post">
+                <h3>Register New Voter</h3>
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <div>
-                    <label for="voterName">Voter ID:</label>
-                    <input type="text" id="voterName" name="voterName">
+                <div class="inputBox">
+                    <input type="text" id="voterName" name="voterName" placeholder="Voter ID"><i></i>
                 </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password">
+                <div class="inputBox">
+                    <input type="password" id="password" name="password" placeholder="Password"><i></i>
                 </div>
-                <button type="submit">
-                    Add
-                </button>
+                <input type="submit" value="Register">
             </form>
-    </div>
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li class="error-msg"><%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
+        </div>
 </body>
 
 </html>

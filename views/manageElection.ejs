@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
-    <link rel="stylesheet" href="/css/index.css">
-    <title><%=title%></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
-    <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
+    <link rel="stylesheet" href="/css/elections.css">
+    <title>
+        <%=title%>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap');
+    </style>
     <script>
         var token = document
             .querySelector('meta[name="csrf-token"]')
@@ -29,7 +36,7 @@
         //         })
         //         .catch((err) => console.log(err));
         // }
-        function endElection(id){
+        function endElection(id) {
             fetch(`/elections/${id}/end`, {
                 method: "put",
                 headers: { "Content-Type": "application/json" },
@@ -44,7 +51,7 @@
                 })
                 .catch((err) => console.log(err));
         }
-        function deleteElection(id){
+        function deleteElection(id) {
             fetch(`/elections/${id}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
@@ -61,40 +68,52 @@
         }
     </script>
 </head>
+
 <body>
-    <div>
-        <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=electionName%></a>
-      </div>
-    <%- include('header.ejs') %>
-    <a href="/signout"><button>SignOut</button></a>
-
-    <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
-    <h4>There are <span class="special"><%=quesCount%></span> questions in the ballot of this election</h4>
-    <% if (! onGoingStatus){%>
-        <a href="/elections/<%=id%>/questions"><button>Manage your questions</button></a>
-    <%}else{%>
-        <p>Election running at:</p>
-        <a id="vote" href="/elections/<%=id%>/vote" class="special" target="_blank">/elections/<%=id%>/vote</a>
-        <%}%>
-    <h4>There are currently <span class="special"><%=voterCount%></span> voters assigned for this election</h4>
-    <a href="/elections/<%=id%>/voters"><button>Manage voters</button></a>
-    <div>
-        <%if(!onGoingStatus){%>
-            <a href="/elections/<%=id%>/electionPreview"><button>Preview Election</button></a>
-            
-            <%}else{%>
-                <button onclick="endElection(<%=id%>)">End Election</button>
-        <%}%>
-
-        <button onclick="deleteElection(<%=id%>)">Delete</button><br>
-        <%if(onGoingStatus){%>
-            <a href="/elections/<%=id%>/results"><button>Results</button></a>
-        <%}%>
+    <div class="nav">
+        <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>">
+            <%=electionName%>
+        </a>
     </div>
+    <%- include('header.ejs') %>
+        <div class="container">
 
-    <script>
-        const vote=document.getElementById("vote")
-        vote.innerText=window.location.origin+vote.innerText
-    </script>
+            <a href="/signout" class="signout">SignOut</a>
+
+            <h3><%=electionName%></h3>
+            <h4>There are <span>
+                    <%=quesCount%>
+                </span> questions in the ballot of this election</h4>
+            <% if (! onGoingStatus){%>
+                <a href="/elections/<%=id%>/questions"><button>Manage your questions</button></a>
+                <%}else{%>
+                    <h4>Election running at:</h4>
+                    <a id="vote" href="/elections/<%=id%>/vote" class="special" target="_blank">/elections/<%=id%>
+                            /vote</a>
+                    <%}%>
+                        <h4>There are currently <span>
+                                <%=voterCount%>
+                            </span> voters assigned for this election</h4>
+                        <a href="/elections/<%=id%>/voters"><button>Manage voters</button></a>
+                        <div class="buttons">
+                            <%if(!onGoingStatus){%>
+                                <a href="/elections/<%=id%>/electionPreview"><button>Preview Election</button></a>
+
+                                <%}else{%>
+                                    <button onclick="endElection(<%=id%>)">End Election</button>
+                                    <%}%>
+
+                                        <button class="del" onclick="deleteElection(<%=id%>)">Delete</button>
+                                        <%if(onGoingStatus){%>
+                                            <a href="/elections/<%=id%>/results" ><button>Results</button></a>
+                                            <%}%>
+                        </div>
+
+                        <script>
+                            const vote = document.getElementById("vote")
+                            vote.innerText = window.location.origin + vote.innerText
+                        </script>
+        </div>
 </body>
+
 </html>
