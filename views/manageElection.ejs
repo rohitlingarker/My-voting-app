@@ -46,7 +46,8 @@
             })
                 .then((res) => {
                     if (res.ok) {
-                        window.location.replace(`/elections/${id}/results`);
+                        window.open(`/elections/${id}/results`,"_blank");
+                        window.location.reload()
                     }
                 })
                 .catch((err) => console.log(err));
@@ -105,7 +106,7 @@
 
                                         <button class="del" onclick="deleteElection(<%=id%>)">Delete</button>
                                         <%if(onGoingStatus){%>
-                                            <a href="/elections/<%=id%>/results" ><button>Results</button></a>
+                                            <a href="/elections/<%=id%>/results" target="_blank" ><button>Results</button></a>
                                             <%}%>
                         </div>
 

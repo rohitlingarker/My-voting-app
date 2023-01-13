@@ -1,0 +1,89 @@
+
+body{
+    background-color: #161a23;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  
+h1{
+    color: #e4e4e4;
+    font-size: 4rem;
+    text-align: center;
+    position: sticky;
+    top:5vh;
+    background-color: #161a23;
+    box-sizing: border-box;
+    padding: 1rem;
+    font-size: 30px;
+    position: relative;
+    
+}
+
+h2{
+    font-size: 2rem;
+    color: #2dfc52;
+    position: sticky;
+    top:0px;
+    background-color: #161a23;
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+}
+
+section{
+    min-height: 70vh;
+    width:80vw;
+    margin: 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 1rem #0001;
+
+    box-sizing: border-box;
+
+}
+.quesName{
+    color: #fc8a2d;
+    font-size: 35px;
+}
+.quesDesc{
+    color: #b4b4b4;
+    margin-left: 30px;
+    font-size: 18px;
+}
+.quesName::first-letter,.quesDesc::first-letter,h2{
+    text-transform: uppercase;
+}
+
+.options{
+    margin:2rem 0;
+    list-style: none;
+}
+.options li{
+    margin-bottom:1rem;
+    font-size: 20px;
+    color: #dfdfdf;
+}
+
+button{
+    border:none;
+  outline:none;
+  background: #2dfc52;
+  padding: 11px 25px;
+  width: 100px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+    margin: auto;
+    left:50%;
+    margin-bottom: 50px;
+}
+button:hover{
+    box-shadow: 0 0 5px #2dfc52,
+  0 0 15px #2dfc52,
+  0 0 25px #2dfc52;
+}
+.green *{
+    color:#2dfc52;
+}

@@ -8,7 +8,7 @@
     <title>
         <%=title%>
     </title>
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/vote.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
 </head>
@@ -17,30 +17,22 @@
     <%- include("header.ejs")%>
 
     
-    <h3>
+    <h2>
         <%=election.name%>
-    </h3>
-        <h2>Results</h2>
-
-        <% if(messages && messages.error && messages.error.length > 0)  { %>
-            <% for(var i=0; i<messages.error.length; i++) { %>
-                    <li><%= messages.error[i] %></li>
-            <% } %>
-          <% } %>
-        <% let questionNo=1 %>
+    </h2>
+        <h3>Results</h3>
+        <% let questionNo=1;let maxCount=-1 %>
             <% for(let i=0;i<questionsList.length;i++){ if(optionsList[questionsList[i].id]){ %>
                     <section>
-                        <div>
-
-                            <em>Question<%=questionNo%>:</em>
-                            <b>
-                                <%=questionsList[i].name%>
-                            </b>
-                        </div>
-                        
-                        <ul>
+                        <h4 class="quesName"><%=questionsList[i].name%>
+                        <ul class="options">
+                        <%for(j in optionsList[questionsList[i].id]){
+                            if(optionsList[questionsList[i].id][j].count>=maxCount){
+                                maxCount=optionsList[questionsList[i].id][j].count
+                            }
+                        }%>
                         <%for(j in optionsList[questionsList[i].id]){%>
-                            <li>
+                            <li class="<%=optionsList[questionsList[i].id][j].count === maxCount ? "green" :""%>">
                                 <p><%=optionsList[questionsList[i].id][j].name%>: <b><%=optionsList[questionsList[i].id][j].count%></b></p>
                             </li>
                             <%}%>

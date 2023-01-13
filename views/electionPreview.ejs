@@ -9,7 +9,7 @@
     <title>
         <%=title%>
     </title>
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/vote.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
 </head>
@@ -50,7 +50,7 @@
 
 <body>
     <%- include("header.ejs")%>
-        <button onclick="startElection(<%=election.id%>,<%=allQuesHaveAtleast2%>,<%=atleastOneques2%>)">Start Election</button>
+        
 
         <h2>
             <%=election.name%>
@@ -60,29 +60,23 @@
         <% let questionNo=1 %>
             <% for(let i=0;i<questionsList.length;i++){  %>
                 <section>
-                    <div>
-
-                        <em>Question<%=questionNo%>:</em>
-                        <b>
-                            <%=questionsList[i].name%>
-                        </b>
-                    </div>
-                    <p> <span>Description:</span>
+                    <h4 class="quesName"><%=questionsList[i].name%>
+                    <div class="quesDesc"> 
                         <%=questionsList[i].description%>
-                    </p>
+                    </div>
 
-                    <%for(j in optionsList[questionsList[i].id]){%>
-                        <ul>
+                    <ul class="options">
+                            <%for(j in optionsList[questionsList[i].id]){%>
 
                             <li>
                                 <%=optionsList[questionsList[i].id][j].name%>
                             </li>
-                        </ul>
-                        <%}%>
+                            <%}%>
+                    </ul>
                 </section>
 
                 <% questionNo++; }%>
-
+                <button onclick="startElection(<%=election.id%>,<%=allQuesHaveAtleast2%>,<%=atleastOneques2%>)">Start Election</button>
 
 </body>
 
