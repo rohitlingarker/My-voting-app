@@ -79,6 +79,11 @@ button{
     left:50%;
     margin-bottom: 50px;
 }
+form button{
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
 button:hover{
     box-shadow: 0 0 5px #2dfc52,
   0 0 15px #2dfc52,
@@ -87,3 +92,14 @@ button:hover{
 .green *{
     color:#2dfc52;
 }
+h3{
+    color: #b4b4b4;
+    font-size: 40px;
+    position: sticky;
+    top: 60px;
+    background-color: #242833;
+    width: 100vw;
+    text-align: center;
+    padding: 0.2rem;
+}
+
