@@ -11,36 +11,56 @@
     <link rel="stylesheet" href="/css/vote.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </head>
 
 <body>
     <%- include("header.ejs")%>
 
     
-    <h2>
+    <h2 style="position: static;">
         <%=election.name%>
     </h2>
-        <h3>Results</h3>
+        <h3 style="position: sticky;top: 0;">Results</h3>
         <% let questionNo=1;let maxCount=-1 %>
+        <div class="container">
+
             <% for(let i=0;i<questionsList.length;i++){ if(optionsList[questionsList[i].id]){ %>
                     <section>
                         <h4 class="quesName"><%=questionsList[i].name%>
-                        <ul class="options">
-                        <%for(j in optionsList[questionsList[i].id]){
-                            if(optionsList[questionsList[i].id][j].count>=maxCount){
-                                maxCount=optionsList[questionsList[i].id][j].count
+                        <canvas id="<%= questionsList[i].id %>" ></canvas>
+                        <script>
+                            
+                            optionNamesList=JSON.parse('<%- JSON.stringify(optionNamesList[questionsList[i].id]) %>')
+                            optionCountList=JSON.parse('<%- JSON.stringify(optionCountList[questionsList[i].id]) %>')
+
+                            var barColors = [];
+                            for(let i=0;i<optionNamesList.length;i++){
+                                barColors.push(`hsl(${Math.floor(Math.random()*360)},100%,50%)`)
                             }
-                        }%>
-                        <%for(j in optionsList[questionsList[i].id]){%>
-                            <li class="<%=optionsList[questionsList[i].id][j].count === maxCount ? "green" :""%>">
-                                <p><%=optionsList[questionsList[i].id][j].name%>: <b><%=optionsList[questionsList[i].id][j].count%></b></p>
-                            </li>
-                            <%}%>
-                        </ul>
+                            console.log(barColors,"\n",optionCountList,optionNamesList);
+                            new Chart('<%- questionsList[i].id %>', {
+                            type: "pie",
+                            data: {
+                                labels: optionNamesList,
+                                datasets: [{
+                                backgroundColor: barColors,
+                                data: optionCountList
+                                }]
+                            },
+                            options: {
+                                legend: {position:"top"},
+                                title: {
+                                display: true,
+                                text: "Results"
+                                }
+                            }
+                            });
+                        </script>
                     </section>
                     
                     <% questionNo++; }}%>
-                    
+        </div>
 </body>
 
 </html>

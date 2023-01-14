@@ -58,6 +58,7 @@
 
 
         <% let questionNo=1 %>
+        <div class="container">
             <% for(let i=0;i<questionsList.length;i++){  %>
                 <section>
                     <h4 class="quesName"><%=questionsList[i].name%>
@@ -76,6 +77,7 @@
                 </section>
 
                 <% questionNo++; }%>
+        </div>
                 <button onclick="startElection(<%=election.id%>,<%=allQuesHaveAtleast2%>,<%=atleastOneques2%>)">Start Election</button>
 
 </body>

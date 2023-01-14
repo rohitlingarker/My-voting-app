@@ -5,29 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Voting App</title>
+    <link rel="stylesheet" href="/css/elections.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap'); </style>
 </head>
 <body>
-    <div>
+    
     <%- include("header.ejs") %> 
-    <h2>Elections that are live:</h2>
-    <table>
-        <% for(let i=0;i<data.length;i++){ %>
-            <tr>
-                <td>
-                    <%= data[i].name %> 
-                </td>
-                <td>
+    <div class="container">
+        
+        <% if(data.length===0){ %>
+            <h3>No Elections live at this moment...</h3>
+        <% }else{%>
+            <h3>Elections that are live:</h3>
+        <%} %> 
+        
+        <ul>
+            <% for(let i=0;i<data.length;i++){ %>
+                <li>
+                    <u>
+                        <%= data[i].name %> 
+                    </u>
+                    
                     <a href="/elections/<%= data[i].id %>/vote">
-                        <button>
+                        <button class="save-btn">
                             Vote
                         </button>
                     </a>
-                </td>
-            </tr>
-        <% } %> 
-    </table>
+                    
+                </li>
+                <% } %> 
+            </ul>
+            
     </div>
 
 </body>

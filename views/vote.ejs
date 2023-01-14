@@ -23,6 +23,7 @@
         <form action="/elections/<%=election.id%>/evalVote" method="post" onsubmit="return confirm('Cannot change your vote after this,proceed?');">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <% let questionNo=1 %>
+            <div class="container">
             <% for(let i=0;i<questionsList.length;i++){ if(optionsList[questionsList[i].id]){ %>
                     <section id="<%=questionNo%>">
                         
@@ -46,8 +47,9 @@
                     </section>
                     
                     <% questionNo++; }}%>
-                    <button type="submit">Vote</button>
-                </form>
+                </div>
+                <button type="submit">Vote</button>
+        </form>
 </body>
 
 </html>

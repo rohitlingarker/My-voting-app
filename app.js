@@ -801,11 +801,15 @@ app.get("/elections/:id/results", async (request, response) => {
   const election = await Election.findByPk(request.params.id);
   if (!election.onGoingStatus || (request.user && request.user.isAdmin)) {
     let optionsList = {};
+    let optionNamesList={};
+    let optionCountList={}
     let options;
     const questionsList = await Question.getAllQuestions(request.params.id);
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
       if (options.length > 1) {
+        optionNamesList[questionsList[i].id] = options.map(opt=>opt.name)
+        optionCountList[questionsList[i].id] = options.map(opt=>opt.count)
         optionsList[questionsList[i].id] = options;
       }
     }
@@ -814,6 +818,8 @@ app.get("/elections/:id/results", async (request, response) => {
       election,
       questionsList,
       optionsList,
+      optionNamesList,
+      optionCountList,
     });
   } else {
     response.send("Election Still going on wait for the results");
