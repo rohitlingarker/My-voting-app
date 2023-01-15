@@ -64,13 +64,15 @@ passport.use(
     {
       usernameField: "voterName",
       passwordField: "password",
+      passReqToCallback:true,
     },
-    (voterName, password, done) => {
-      Voter.findOne({ where: { voterName } })
+    (request,voterName, password, done) => {
+      Voter.findOne({ where: { voterName,electionId:request.body.electionId } })
         .then(async (user) => {
           const result = await bcrypt.compare(password, user.password);
 
           if (result) {
+            
             return done(null, user);
           } else {
             return done(null, false, { message: "Invalid Password" });
@@ -257,7 +259,7 @@ app.get(
   isAdmin(),
   async (request, response) => {
     try {
-      const electionList = await Election.getAllElections();
+      const electionList = await Election.getAllElections(request.user.id);
       if (request.accepts("html")) {
         // console.log({ electionList });
         // response.json(electionList);
@@ -283,6 +285,7 @@ app.post(
     try {
       const newElection = await Election.createElection({
         name: request.body.name,
+        userId:request.user.id
       });
       console.log(`Created election ${newElection.name}`);
       return response.redirect(`/elections/${newElection.id}`);
@@ -298,7 +301,7 @@ app.get(
   isAdmin(),
   async (request, response) => {
     try {
-      const { name, onGoingStatus } = await Election.findByPk(
+      const election = await Election.findByPk(
         request.params.id
       );
       const quesCount = await Question.count({
@@ -313,12 +316,13 @@ app.get(
       });
 
       response.render("manageElection", {
-        title: name,
+        title: election.name,
         quesCount,
         voterCount,
-        electionName: name,
-        onGoingStatus,
+        electionName: election.name,
+        onGoingStatus:election.onGoingStatus,
         id: request.params.id,
+        election,
         csrfToken: request.csrfToken(),
       });
     } catch (error) {
@@ -750,6 +754,7 @@ app.get(
     let optionsList = {};
     let options;
     const election = await Election.findByPk(request.params.id);
+    
     const questionsList = await Question.getAllQuestions(request.params.id);
     for (let i = 0; i < questionsList.length; i++) {
       options = await questionsList[i].getOptions();
@@ -775,9 +780,7 @@ app.post(
   isVoter(),
   isEligible(),
   async (request, response) => {
-    console.log(
-      "////////////////////////////////////////////////////////////////////////////////////////"
-    );
+    
     delete request.body._csrf;
     console.log(request.body);
     for (const key in request.body) {
@@ -862,5 +865,45 @@ app.get("/elections/:id/electionPreview", async (request, response) => {
     csrfToken: request.csrfToken(),
   });
 });
+
+app.put("/elections/:id/setCustomPath",isAdmin(),async (request,response)=>{
+  const updatedElection = await Election.update({customPath:request.body.customPath},{
+      where:{
+        id:request.params.id
+      }
+    })
+    console.log("//////////////////////",updatedElection);
+    response.json(updatedElection)
+  })
+
+
+
+app.get("/:customPath",
+async (request,response)=>{
+  var customPaths=[];
+  const electionsList=await Election.findAll()
+  console.log("yayyyyyyyyyyyyy",electionsList);
+  
+  for(let i=0;i<electionsList.length;i++){
+    if(electionsList[i].customPath){
+      customPaths.push(electionsList[i].customPath)
+  }
+  if (customPaths.includes(request.params.customPath)){
+    const election = await Election.findOne({where:{customPath:request.params.customPath}})
+    response.redirect(`/elections/${election.id}/vote`)
+  }
+}
+  
+})
+
+
+// app.put("/election/:id/setCustomPath",async (request,response)=>{
+//   const updatedElection = await Election.update({customPath:request.body.customPath},{
+//     where:{
+//       id:request.params.id
+//     }
+//   })
+//   response.json(updatedElection)
+// })
 
 module.exports = app;

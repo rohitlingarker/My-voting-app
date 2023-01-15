@@ -263,3 +263,54 @@ li .icons{
 small{
     color:#fc2d2d;
 }
+.customUrl{
+    max-height:30px;
+    height: 25px;
+    display: flex;
+    color: #2de4fc;
+    overflow: hidden;
+    margin: 0.3rem;
+    width: 25px;
+    transition: width 0.5s;
+    transition-timing-function:cubic-bezier(0.41,-0.1, 0.19, 1.11)
+
+    
+}
+.customUrl span{
+    color: #2de4fc;
+    width:25px;
+    min-width: 25px;
+    cursor: pointer;
+}
+.customUrl input{
+    background-color: #161a23;
+    border: none;
+    border-bottom: 2px solid #2de4fc;
+    border-radius: 8px;
+    padding: 0.2rem 0.5rem;
+    margin:0 1rem;
+    color: #c58912;
+}
+
+.customUrl button{
+    background-color: #161a23;
+    border-radius: 8px;
+    padding: 0.2rem 0.6rem;
+    border:2px solid #2de4fc;
+    color: #dfdfdf;
+    cursor: pointer;
+} 
+.customUrl button:hover{
+    box-shadow:inset 0 0 10px #2de4fc;
+    text-shadow: 0 0 3px #fffa;
+    color: #fff;
+
+} 
+
+.customUrl.active{
+    transition: width 1s;
+    
+    transition-timing-function:cubic-bezier(0.58,-0.1, 0, 1.1);
+    width: 310px;
+    
+}

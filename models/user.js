@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     /* eslint-disable no-unused-vars */
     static associate(models) {
       // define association here
+      User.hasMany(models.Election, {
+        onDelete: "CASCADE",
+        foreignKey: "userId",
+      });
     }
     static async allusers() {
       return this.findAll({});

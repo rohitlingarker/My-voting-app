@@ -17,10 +17,16 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         foreignKey: "electionId",
       });
+      Election.belongsTo(models.Election, {
+        foreignKey: "userId",
+      });
     }
-    static async getAllElections() {
+    static async getAllElections(userId) {
       try {
         return await Election.findAll({
+          where:{
+            userId
+          },
           order: [["id", "ASC"]],
         });
       } catch (error) {
@@ -49,9 +55,9 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ onGoingStatus: updatedStatus });
     }
 
-    static async createElection({ name }) {
+    static async createElection({ name,userId }) {
       try {
-        return await this.create({ name: name, onGoingStatus: false });
+        return await this.create({ name: name, onGoingStatus: false ,userId});
       } catch (error) {
         console.log(error);
       }
@@ -73,6 +79,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       onGoingStatus: DataTypes.BOOLEAN,
+      customPath:DataTypes.STRING
     },
     {
       sequelize,

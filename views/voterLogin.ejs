@@ -22,6 +22,7 @@
             <form action="/elections/<%=id%>/voterlogin" method="post">
                 <h3>Login to your account(voter)</h3>
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="electionId" value="<%= id %>">
                 <div class="inputBox">
                     <input type="voterName" name="voterName" placeholder="Voter Id"><i></i>
                 </div>
