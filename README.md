@@ -6,8 +6,10 @@ This is a web application that allows for conducting elections using Express.js,
 - User registration and login
 - Create and manage elections 
 - View and vote on candidates
-- View election results
+- View election results in a graph representation
 - Admin controls for managing elections and users
+
+### Pictures from the Application
 
 ### Built With
 - [Express.js](https://expressjs.com/) - The web framework used
