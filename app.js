@@ -152,6 +152,7 @@ function isAdmin() {
     if (req.user.isAdmin === true) {
       next();
     } else {
+      req.flash("error",'login as "Admin"')
       res.redirect("/login");
     }
   };
@@ -291,6 +292,10 @@ app.post(
       return response.redirect(`/elections/${newElection.id}`);
     } catch (error) {
       console.log(error);
+      for(let i=0;i<error.errors.length;i++){
+        request.flash("error",error.errors[i].message)
+      }
+      response.redirect("/elections")
     }
   }
 );
@@ -485,6 +490,10 @@ app.post(
       }
     } catch (error) {
       console.log(error);
+      for(let i=0;i<error.errors.length;i++){
+        request.flash("error",error.errors[i].message)
+      }
+      response.redirect(`/elections/${request.params.id}/questions/new`)
     }
   }
 );
@@ -571,6 +580,10 @@ app.post(
       );
     } catch (error) {
       console.log(error);
+      for(let i=0;i<error.errors.length;i++){
+        request.flash("error",error.errors[i].message)
+      }
+      response.redirect(`/elections/${request.params.id}/questions/${request.params.qid}`)
     }
   }
 );
@@ -647,6 +660,10 @@ app.post(
       }
     } catch (error) {
       console.log(error);
+      for(let i=0;i<error.errors.length;i++){
+        request.flash("error",error.errors[i].message)
+      }
+      response.redirect(`/elections/${request.params.id}/voters/new`)
     }
   }
 );
@@ -689,13 +706,11 @@ app.post("/users", async (request, response) => {
       response.redirect("/elections");
     });
   } catch (error) {
-    // error.errors.forEach((element) => {
-    //   const msg = element.message;
-    //   request.flash("error", msg);
-    //   // if(msg==='Validation len on firstName failed'){request.flash("error","Fist Name required")}
-    //   // if(msg==='Validation len on email failed'){request.flash("error","Email required")}
-    //   // if(msg==='email must be unique'){request.flash("error","Email Already Existing")}
-    // });
+    error.errors.forEach((element) => {
+      const msg = element.message;
+      request.flash("error", msg);
+
+    });
 
     console.log(error);
     response.redirect("/signup");
@@ -878,32 +893,54 @@ app.put("/elections/:id/setCustomPath",isAdmin(),async (request,response)=>{
 
 
 
-app.get("/:customPath",
-async (request,response)=>{
-  var customPaths=[];
-  const electionsList=await Election.findAll()
-  console.log("yayyyyyyyyyyyyy",electionsList);
   
-  for(let i=0;i<electionsList.length;i++){
-    if(electionsList[i].customPath){
-      customPaths.push(electionsList[i].customPath)
+  app.get("/changePassword",
+  connectEnsureLogin.ensureLoggedIn(),
+  isAdmin(),
+  (request,response)=>{
+    response.render("changePassword",{title:"Change Password",csrfToken:request.csrfToken()})
   }
-  if (customPaths.includes(request.params.customPath)){
-    const election = await Election.findOne({where:{customPath:request.params.customPath}})
-    response.redirect(`/elections/${election.id}/vote`)
-  }
-}
+  )
   
-})
-
-
-// app.put("/election/:id/setCustomPath",async (request,response)=>{
-//   const updatedElection = await Election.update({customPath:request.body.customPath},{
-//     where:{
-//       id:request.params.id
-//     }
-//   })
-//   response.json(updatedElection)
-// })
-
-module.exports = app;
+  app.post("/changePassword",
+  connectEnsureLogin.ensureLoggedIn(),
+  isAdmin(),
+  async (request,response)=>{
+    const oldPassword = request.user.password;
+    const result = await bcrypt.compare(request.body.oldPassword,oldPassword);
+    if (result){
+      const hashedNewPassword = await bcrypt.hash(request.body.newPassword,saltRounds)
+      User.update({password:hashedNewPassword},{
+        where:{
+          id:request.user.id
+        }
+      })
+      response.redirect("/signout")
+    }else{
+      request.flash("error","Old password given doesn't match")
+      response.redirect("/changePassword")
+    }
+  }
+  )
+  
+  
+  app.get("/:customPath",
+  async (request,response)=>{
+    var customPaths=[];
+    const electionsList=await Election.findAll()
+    console.log("yayyyyyyyyyyyyy",electionsList);
+    
+    for(let i=0;i<electionsList.length;i++){
+      if(electionsList[i].customPath){
+        customPaths.push(electionsList[i].customPath)
+    }
+    if (customPaths.includes(request.params.customPath)){
+      const election = await Election.findOne({where:{customPath:request.params.customPath}})
+      response.redirect(`/elections/${election.id}/vote`)
+    }
+  }
+    
+  })
+  
+  module.exports = app;
+  

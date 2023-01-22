@@ -1,43 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%=title%></title>
-    <link rel="stylesheet" href="./css/elections.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap");
-    </style>
-  </head>
 
-  <body>
-    <div class="nav"><a href="/">home</a>><a href="/elections"> elections </a></div>
-    <%- include('header.ejs') %>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%=title%>
+  </title>
+  <link rel="stylesheet" href="./css/elections.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rubik+Microbe&display=swap" rel="stylesheet" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap");
+  </style>
+</head>
+
+<body>
+  <div class="nav"><a href="/">home</a>><a href="/elections"> elections </a></div>
+  <%- include('header.ejs') %>
     <div>
       <div class="container">
         <a href="/signout" class="signout">SignOut</a>
+        <a href="/changePassword" class="changePwd">Change Password</a>
         <h3>Elections</h3>
         <ul>
           <% for (let i=0; i < data.length;i++){%>
-          <li>
-            
-              <a
-                href="/elections/<%= data[i].id %>"
-                onclick="redirectToElectionPage(<%= data[i].id%>)"
-              >
+            <li>
+
+              <a href="/elections/<%= data[i].id %>" onclick="redirectToElectionPage(<%= data[i].id%>)">
                 <%= data[i].name %>
               </a>
-            
-          </li>
-          <% } %>
+
+            </li>
+            <% } %>
         </ul>
+        
       </div>
       <div>
         <form action="/elections" method="post">
@@ -47,5 +46,21 @@
         </form>
       </div>
     </div>
-  </body>
+    <% if(messages && messages.error && messages.error.length > 0)  { %>
+      <% for(var i=0; i<messages.error.length; i++) { %>
+              <li class="error-msg"><%= messages.error[i] %></li>
+      <% } %>
+    <% } %>
+    <script>
+      function myFunction() {
+        var x = document.querySelectorAll(".error-msg");
+          console.log(x);
+        x.forEach((a) => {a.classList.add("show");})
+
+        setTimeout(function(){ x.forEach((a)=>{a.className = a.className.replace("show", "");}) }, 3000);
+      }
+      window.addEventListener("DOMContentLoaded",myFunction)
+    </script>
+</body>
+
 </html>

@@ -40,6 +40,16 @@
                         <li> <%= messages.error[i] %></li>
                 <% } %>
                 <% } %>
+                <script>
+                    function myFunction() {
+                      var x = document.querySelectorAll(".error-msg");
+                        console.log(x);
+                      x.forEach((a) => {a.classList.add("show");})
+              
+                      setTimeout(function(){ x.forEach((a)=>{a.className = a.className.replace("show", "");}) }, 3000);
+                    }
+                    window.addEventListener("DOMContentLoaded",myFunction)
+                  </script>
     </div>
     
 </body>
